@@ -1,4 +1,4 @@
-# SenegaleseMedicalPacks
+## SenegaleseMedicalPacks
 
 [Short description]
 SenegaleseMedicalPacks is a collection of medical prediction and generation packages tailored for use within the Senegalese medical framework. The goal is to provide easy-to-install, well-documented tools for common clinical prediction, reporting, and data-generation workflows while respecting local standards, language, and privacy requirements.
