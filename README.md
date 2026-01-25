@@ -45,8 +45,8 @@ Features
 Quickstart
 1. Clone the repo:
    ```bash
-   git clone https://github.com/<owner>/<repo>.git
-   cd <repo>
+   git clone https://github.com/Oumar199/SenegaleseMedicalPacks.git
+   cd SenegaleseMedicalPacks
    ```
 2. Create a virtual environment and install dependencies:
    ```bash
@@ -170,5 +170,5 @@ This repository uses the MIT License. See LICENSE for full text. (Change to the 
 Maintainers & Contact
 - Maintainer: Oumar199 (GitHub: @Oumar199)
 - For issues: open an issue in this repository.
-- For security or sensitive questions: email <maintainer-email@example.com> (replace with real contact).
+- For security or sensitive questions: email mbousso@univ-thies.sn.
 
