@@ -67,12 +67,12 @@ Installation
   ```
 - From GitHub (recommended for latest)
   ```bash
-  pip install git+https://github.com/<owner>/<repo>.git
+  pip install git+https://github.com/Oumar199/SenegaleseMedicalPacks.git
   ```
 - From source (developer)
   ```bash
-  git clone https://github.com/<owner>/<repo>.git
-  cd <repo>
+  git clone https://github.com/Oumar199/SenegaleseMedicalPacks.git
+  cd SenegaleseMedicalPacks
   pip install -e .
   ```
 
