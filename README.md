@@ -172,3 +172,13 @@ Maintainers & Contact
 - For issues: open an issue in this repository.
 - For security or sensitive questions: email mbousso@univ-thies.sn.
 
+Citation
+```bibtex
+@misc{uidt2026senegalesemedicalpacks,
+  title={Senegalese Medical Packages},
+  author={Mamadou Bousso, Oumar Kane, Cheikh Yakhoub Maas, **Methou Sanghe**, **Aby Diallo**},
+  howpublished={https://github.com/Oumar199/SenegaleseMedicalPacks},
+  year={2026}
+}
+```
+
