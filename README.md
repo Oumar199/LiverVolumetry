@@ -176,7 +176,7 @@ Citation
 ```bibtex
 @misc{uidt2026senegalesemedicalpacks,
   title={Senegalese Medical Packages},
-  author={Mamadou Bousso, Methou Sanghe, Aby Diallo, Oumar Kane, Cheikh Yakhoub Maas},
+  author={Mamadou Bousso, Aby Diallo, Methou Sanghe, Oumar Kane, Cheikh Yakhoub Maas},
   howpublished={https://github.com/Oumar199/SenegaleseMedicalPacks},
   year={2026}
 }
