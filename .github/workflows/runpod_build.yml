@@ -27,7 +27,7 @@ jobs:
           push: true
           # On génère deux tags ici
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/nllb-french-wolof-tr-bil-worker:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/nllb-french-wolof-tr-bil-worker:v${{ github.run_number }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/liver-fibrosis-volume-analysis:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/liver-fibrosis-volume-analysis:v${{ github.run_number }}
           platforms: linux/amd64
           
