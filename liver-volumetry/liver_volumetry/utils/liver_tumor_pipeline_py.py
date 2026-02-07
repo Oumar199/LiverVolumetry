@@ -1,0 +1,218 @@
+# %% [code]
+# liver_tumor_pipeline.py
+"""Utils
+---
+Some functions to help us segment, plot, analysis, ...
+"""
+
+from ...liver_volumetry import *
+
+# ======================================================
+# MODELS LOADING
+# ======================================================
+
+def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
+    """
+    Charge les modèles de segmentation foie et tumeur (U-Net, etc.).
+    """
+    model_liver = load_model(liver_model_path, compile=False)
+    model_tumor = load_model(tumor_model_path, compile=False)
+    return model_liver, model_tumor
+
+
+def load_medgemma_4bit():
+    """
+    Charge MedGemma 1.5 4B quantifié 4-bit + processor officiel.
+    """
+    model_repo = "Metou/MedGemma-1.5-4B"
+    subfolder = "bismedgemma-4bit"
+
+    model = AutoModelForImageTextToText.from_pretrained(
+        model_repo,
+        subfolder=subfolder,
+        device_map="auto",
+        torch_dtype=torch.float16
+    )
+
+    processor = AutoProcessor.from_pretrained(
+        "google/medgemma-1.5-4b-it",
+        use_fast=False
+    )
+
+    return model, processor
+
+
+# ======================================================
+# IMAGE PREPROCESSING
+# ======================================================
+
+def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
+    """
+    Charge une coupe CT en niveaux de gris et la normalise.
+    """
+    img = load_img(
+        image_path,
+        target_size=target_size,
+        color_mode="grayscale"
+    )
+    img_array = img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = img_array / 255.0
+    return img_array
+
+
+# ======================================================
+# SEGMENTATION
+# ======================================================
+
+def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
+    """
+    Segmentation foie + tumeur.
+    """
+    liver_pred = model_liver.predict(img_array, verbose=0)
+    tumor_pred = model_tumor.predict(img_array, verbose=0)
+
+    liver_mask = (liver_pred > threshold).astype(np.uint8)
+    tumor_mask = (tumor_pred > threshold).astype(np.uint8)
+
+    return liver_mask, tumor_mask
+
+
+# ======================================================
+# VISUALIZATION / OVERLAY
+# ======================================================
+
+def build_overlay(img_array, liver_mask, tumor_mask):
+    """
+    Crée une image RGB overlay :
+    - fond : CT
+    - foie : blanc
+    - tumeur : gris
+    """
+    base = img_array[0, :, :, 0].copy()
+
+    overlay = base.copy()
+    overlay[liver_mask[0, :, :, 0] == 1] = 1.0
+    overlay[tumor_mask[0, :, :, 0] == 1] = 0.5
+    overlay = np.clip(overlay, 0, 1)
+
+    overlay_rgb = np.stack([overlay] * 3, axis=-1)
+    overlay_uint8 = (overlay_rgb * 255).astype(np.uint8)
+
+    return Image.fromarray(overlay_uint8)
+
+
+def plot_results(img_array, liver_mask, tumor_mask):
+    """
+    Visualisation rapide.
+    """
+    plt.figure(figsize=(12, 4))
+
+    plt.subplot(1, 3, 1)
+    plt.title("Image CT")
+    plt.imshow(img_array[0, :, :, 0], cmap="gray")
+    plt.axis("off")
+
+    plt.subplot(1, 3, 2)
+    plt.title("Masque Foie")
+    plt.imshow(liver_mask[0, :, :, 0], cmap="jet")
+    plt.axis("off")
+
+    plt.subplot(1, 3, 3)
+    plt.title("Masque Tumeur")
+    plt.imshow(tumor_mask[0, :, :, 0], cmap="hot")
+    plt.axis("off")
+
+    plt.show()
+
+
+# ======================================================
+# VOLUME COMPUTATION
+# ======================================================
+
+def compute_volumes(
+    liver_mask,
+    tumor_mask,
+    pixel_area_mm2=0.37,
+    slice_thickness_mm=1.5
+):
+    """
+    Calcule volumes foie / tumeur et ratio tumoral.
+    """
+    liver_pixels = np.count_nonzero(liver_mask)
+    tumor_pixels = np.count_nonzero(tumor_mask)
+
+    liver_volume_cm3 = (liver_pixels * pixel_area_mm2 * slice_thickness_mm) / 1000
+    tumor_volume_cm3 = (tumor_pixels * pixel_area_mm2 * slice_thickness_mm) / 1000
+
+    ratio = (
+        100 * tumor_volume_cm3 / liver_volume_cm3
+        if liver_volume_cm3 > 0 else 0.0
+    )
+
+    return {
+        "liver_volume_cm3": liver_volume_cm3,
+        "tumor_volume_cm3": tumor_volume_cm3,
+        "tumor_ratio_percent": ratio
+    }
+
+
+# ======================================================
+# MEDGEMMA ANALYSIS
+# ======================================================
+
+def build_medgemma_prompt(volumes: dict):
+    """
+    Prompt multimodal MedGemma (image + texte clinique).
+    """
+    return [
+        {
+            "role": "user",
+            "content": [
+                {"type": "image"},
+                {
+                    "type": "text",
+                    "text": (
+                        "Abdominal CT slice with liver and tumor segmentation.\n\n"
+                        f"Liver volume: {volumes['liver_volume_cm3']:.2f} cm3\n"
+                        f"Tumor volume: {volumes['tumor_volume_cm3']:.2f} cm3\n"
+                        f"Tumor-to-liver ratio: {volumes['tumor_ratio_percent']:.2f}%\n\n"
+                        "Provide a concise clinical interpretation."
+                    )
+                }
+            ]
+        }
+    ]
+
+
+def run_medgemma_analysis(
+    model,
+    processor,
+    overlay_image: Image.Image,
+    volumes: dict,
+    max_new_tokens: int = 2000
+):
+    """
+    Génération du rapport clinique par MedGemma.
+    """
+    messages = build_medgemma_prompt(volumes)
+
+    prompt = processor.apply_chat_template(
+        messages,
+        add_generation_prompt=True
+    )
+
+    inputs = processor(
+        text=prompt,
+        images=overlay_image,
+        return_tensors="pt"
+    ).to(model.device)
+
+    with torch.no_grad():
+        output = model.generate(
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=False
+        )
+
+    return processor.decode(output[0], skip_special_tokens=True)

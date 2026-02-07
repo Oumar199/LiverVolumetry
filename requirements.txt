@@ -1,0 +1,15 @@
+numpy==2.0.2
+
+torch==2.8.0+cu126
+torchvision==0.23.0+cu126
+
+tensorflow==2.19.0
+keras==3.10.0
+
+transformers==4.57.1
+accelerate==1.11.0
+safetensors==0.6.2
+
+pillow==11.3.0
+matplotlib==3.10.0
+bitsandbytes>=0.46.1
