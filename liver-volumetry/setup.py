@@ -9,8 +9,8 @@ setup(
     description="Contains modules to segment liver to detect fibrosis, estimate fibrosis volume, and analysis results using state of art medical LLM for diagnosis.",
     install_requires=[
         "numpy==2.0.2",
-        "torch==2.8.0+cu126",
-        "torchvision==0.23.0+cu126",
+        "torch==2.8.0",
+        "torchvision==0.23.0",
         "tensorflow==2.19.0",
         "keras==3.10.0",
         "transformers==4.57.1",
