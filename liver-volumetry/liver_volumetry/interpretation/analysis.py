@@ -66,17 +66,18 @@ def load_image(image_path: str):
     
     return img
 
-def segment_image(img: Any, models_path: str = "models\\ModelSegmentation"):
+def segment_image(img: Any, models: tuple):
     """Segment image to get regions
 
     Args:
         img (Any): image
-        models_path (str, optional): Path to models. Defaults to "models\ModelSegmentation".
+        models (tuple, optional): liver and tumor models.
 
     Returns:
         tuple: liver mask, tumor mask
     """
-    liver_model, tumor_model = get_models(models_path)
+    
+    liver_model, tumor_model = models
     
     # Segmentation
     liver_mask, tumor_mask = ltp.run_segmentation(
@@ -134,16 +135,20 @@ def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: 
     
     return model, processor
 
-def analysis_image(img, models_path: str = "models\\ModelSegmentation", model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: str = "bismedgemma-4bit")
+def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any):
     """Plot segmentation and volumes and obtain analysis from llm
-
+    
+    Args:
+        img (Any): the image.
+        models (tuple): the liver and tumor models.
+        llm_model (Any): the llm model for analysis.
+        processor (Any): the processor to process image.
+        
     Returns:
         str: analysis
     """
     
-    model_llm, processor = get_llm_and_processor(model_repo, subfolder)
-    
-    masks = segment_image(img, models_path)
+    masks = segment_image(img, models)
     
     overlay, volumes = identify_volumes(img, masks)
     

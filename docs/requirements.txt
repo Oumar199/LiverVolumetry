@@ -13,3 +13,5 @@ safetensors==0.6.2
 pillow==11.3.0
 matplotlib==3.10.0
 bitsandbytes>=0.46.1
+
+
