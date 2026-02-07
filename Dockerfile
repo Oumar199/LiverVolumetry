@@ -3,14 +3,14 @@ FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
 # Install Python
 RUN apt-get update && apt-get install -y python3.11 python3-pip
 
-# Set the working directory in the container
+# 1. Copiez d'abord le dossier du projet dans le conteneur
+COPY liver-volumetry /app/liver-volumetry
+
+# 2. Définissez le répertoire de travail
 WORKDIR /app
 
-# Copy the requirements file
-COPY docs/requirements.txt .
-
-# Install the Python dependencies
-RUN pip install --no-cache-dir -e liver-volumetry
+# 3. Installez en utilisant le chemin relatif (le point "." désigne le dossier courant)
+RUN pip install --no-cache-dir -e ./liver-volumetry
 
 # Copy your handler code
 COPY docs/handler.py .
