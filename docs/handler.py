@@ -5,7 +5,7 @@ import os
 
 
 ######################
-# import models : models must be placed at models\\ModelSegmentation
+# import models : models must be placed at models/ModelSegmentation
 # liver model filename: final_model_unet_foie.h5
 # tumor model filename: final_model_tumor_resunet.h5
 ######################
