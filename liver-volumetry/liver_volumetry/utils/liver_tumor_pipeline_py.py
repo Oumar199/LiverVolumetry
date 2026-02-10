@@ -150,8 +150,6 @@ def plot_results(img_array, get_image, liver_mask, tumor_mask):
     else:
         
         plt.show()
-        
-        plt.close()
 
 # ======================================================
 # VOLUME COMPUTATION
