@@ -1,6 +1,6 @@
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer  
 from huggingface_hub import hf_hub_download
-from liver_volumetry.interpretation.analysis import *
+from liver_volumetry.interpretation.analysis import get_models, get_llm_and_processor, load_image, analysis_image
 import fasttext
 import runpod  
 import base64
@@ -15,7 +15,7 @@ import os
 
 models = get_models()
 
-llm_model, processor = get_llm_and_processor()
+llm_model, processor = get_llm_and_processor(model_repo = "/runpod-volume/medgemma_analysis_model", base_repo = "/runpod-volume/medgemma_base_model")
 
 TARGET_DIR = "images"
 
@@ -49,11 +49,14 @@ def handler(job):
         
         img = load_image(save_path)
         
-        analysis = analysis_image(img)
+        analysis, volumes = analysis_image(img)
 
         return {
             "status": "success",
-            "analysis": analysis,
+            "liver_volume_cm3": volumes['liver_volume_cm3'],
+            "tumor_volume_cm3": volumes['tumor_volume_cm3'],
+            "tumor_ratio_percent": volumes['tumor_ratio_percent'],
+            "analysis": analysis
         }
 
     except Exception as e:
