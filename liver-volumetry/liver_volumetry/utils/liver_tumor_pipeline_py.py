@@ -102,9 +102,9 @@ def build_overlay(img_array, liver_mask, tumor_mask):
     return Image.fromarray(overlay_uint8)
 
 
-def plot_results(img_array, liver_mask, tumor_mask):
+def plot_results(img_array, get_image, liver_mask, tumor_mask):
     """
-    Fast visualization with matplotlib.
+    Fast visualization with matplotlib and return string format.
     """
     plt.figure(figsize=(12, 4))
 
@@ -123,8 +123,35 @@ def plot_results(img_array, liver_mask, tumor_mask):
     plt.imshow(tumor_mask[0, :, :, 0], cmap="hot")
     plt.axis("off")
 
-    plt.show()
+    # Adjust layout to prevent overlapping titles/labels
+    plt.tight_layout()
 
+    if get_image:
+        
+        # Save the figure to a bytes buffer
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight')
+        
+        # Close the plot to free memory and prevent display in interactive environments
+        plt.close()
+        
+        # Get the image data as a string (bytes)
+        buf.seek(0)
+        img_bytes = buf.read()
+        
+        # Encode the bytes to a base64 string
+        img_string = base64.b64encode(img_bytes).decode('utf-8')
+        
+        # Close the buffer
+        buf.close()
+        
+        return img_string
+    
+    else:
+        
+        plt.show()
+        
+        plt.close()
 
 # ======================================================
 # VOLUME COMPUTATION

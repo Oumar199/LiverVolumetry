@@ -1,11 +1,7 @@
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer  
-from huggingface_hub import hf_hub_download
 from liver_volumetry.interpretation.analysis import get_models, get_llm_and_processor, load_image, analysis_image
-import fasttext
 import runpod  
 import base64
 import os  
-import re
 
 
 ######################
@@ -50,14 +46,15 @@ def handler(job):
         
         img = load_image(save_path)
         
-        analysis, volumes = analysis_image(img, models, llm_model, processor).split("\nmodel\n", 1)[1]
+        analysis, volumes, img_string = analysis_image(img, models, llm_model, processor, get_image = True).split("\nmodel\n", 1)[1]
 
         return {
             "status": "success",
             "liver_volume_cm3": volumes['liver_volume_cm3'],
             "tumor_volume_cm3": volumes['tumor_volume_cm3'],
             "tumor_ratio_percent": volumes['tumor_ratio_percent'],
-            "analysis": analysis
+            "analysis": analysis,
+            "img_string": img_string
         }
 
     except Exception as e:

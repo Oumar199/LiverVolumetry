@@ -112,8 +112,9 @@ def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: 
     """Get llm and processor
 
     Args:
-        model_repo (str, optional): huggingface repository. Defaults to "Metou/MedGemma-1.5-4B".
+        model_repo (str, optional): huggingface repository (or local path). Defaults to "Metou/MedGemma-1.5-4B".
         subfolder (str, optional): the subfolder to model. Defaults to "bismedgemma-4bit".
+        base_repo (str, optional): huggingface repository (or local path) to base model. Defaults to "google/medgemma-1.5-4b-it".
 
     Returns:
         tuple: model, processor
@@ -134,7 +135,7 @@ def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: 
     
     return model, processor
 
-def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any):
+def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any, get_image = False):
     """Plot segmentation and volumes and obtain analysis from llm
     
     Args:
@@ -142,9 +143,10 @@ def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any):
         models (tuple): the liver and tumor models.
         llm_model (Any): the llm model for analysis.
         processor (Any): the processor to process image.
+        get_image (bool): indicate if image should be returned or rendered. Defaults to False.
         
     Returns:
-        str: analysis
+        str: analysis, volumes, image (with segmentation) string
     """
     
     masks = segment_image(img, models)
@@ -158,9 +160,9 @@ def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any):
         volumes
     )
     
-    ltp.plot_results(img, *masks)
+    img_string = ltp.plot_results(img, get_image, *masks)
     
-    return analysis, volumes
+    return analysis, volumes, img_string
 
 
 """## Example of output :
