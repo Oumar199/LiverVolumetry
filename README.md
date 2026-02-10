@@ -72,36 +72,134 @@ We added automatic outcome analysis of the volumetry model using a quantized 4-b
 
 ---
 
-## Installation
+## Notes for Usage
 
-```bash
-git clone https://github.com/Oumar199/LiverVolumetry.git
-cd LiverVolumetry
-python -m venv .venv
-source .venv/bin/activate   # (Linux/Mac)
-pip install -r requirements.txt
-```
+If you want to use our `liver-volumetry` package follows the Usage Example section. 
+
+However to directly analyze (recommended) a liver image using the quantized Medgemma-1.5-4b model and get all results at once, you can directly follows the steps in the RunPod Serverless API Examples section which provides access to our runpod serverless endpoint. 
 
 ---
 
-## Usage Example
+## Usage Example 
+
+It is possible to install our repository package and use the different functionalities. We provide below a step by step guide.
+
+### 1. Installation (terminal only)
+
+First clone the repository from github using `git` and enter into the directory. 
+```bash
+git clone https://github.com/Oumar199/LiverVolumetry.git
+cd LiverVolumetry
+```
+To overcome version conflicts you should create an environment and install the `liver-volumetry` package in the environment.
+```bash
+python -m venv .venv
+source .venv/bin/activate   # (Linux/Mac)
+pip install -e liver-volumetry
+```
+
+### 2. Loading Models
+
+Next you can load segmentation models using our `get_models` function. This function takes as arguments path to segmentation models. They are initially put into the models directory.
+```python
+from liver_volumetry.interpretation.analysis import get_models
+
+liver_model, tumor_model = get_models()
+```
+
+### 3. Loading an Image
+
+Images are put into the images directory and corresponds to the liver image that should be segmented and analyzed. If you have a new image placed it in the images directory and then use the `load_image` function to recuperate the image. Only the image path should be passed to the `load_image` function. You can use the example image available in the images directory.
+<img width="402" height="386" alt="image" src="https://github.com/user-attachments/assets/55f38b01-8b6c-4e1b-8bcb-c78ca55fa239" />
+
 
 ```python
-from livervolumetry.segmentation import UNetSegmenter
-from livervolumetry.volumetry import compute_volume
-from livervolumetry.medgemma import MedgemmaAnalyzer
+from liver_volumetry.interpretation.analysis import load_image
 
-# Segment liver and tumor
-segmenter = UNetSegmenter(model_path="models/unet.pt")
-mask = segmenter.segment(dicom_series_path="data/patient01.dcm")
+img = load_image('images/output_liver_segmentation.jpg') # modify the path as needed
+```
 
-# Compute volumes
-volume = compute_volume(mask, dicom_metadata="data/patient01.dcm")
+### 4. Segment Image
 
-# Analyze outcome with quantized Medgemma
-analyzer = MedgemmaAnalyzer(model_path="models/medgemma-1.5-4b-quantized.pt")
-report = analyzer.analyze(volume)
-print(report)
+The image, `img`, is going through a segmentation process using loaded segmentation models. image and models (as a tuple) are passed to the function `segment_image`.
+```python
+from liver_volumetry.interpretation.analysis import segment_image
+
+liver_mask, tumor_mask = segment_image(img, (liver_model, tumor_model))
+```
+
+### 5. Identify Volumes
+
+Next we should calculate the liver and tumor volumes and get overlay of segmentations using the `identify_volumes` function. Image and masks (as a tuple) should be passed as arguments to the function.
+```python
+from liver_volumetry.interpretation.analysis import identify_volumes
+
+overlay, volumes = identify_volumes(img, (liver_mask, tumor_mask))
+
+print(volumes)
+```
+
+### 6. Plot Segmentations
+
+You can plot the results of the segmentation process using the `plot_results` function. The `get_image` argument, when equal to `True`, return the plot as a string. It should be equal to `False` to enable direct rendering of the plot. 
+```python
+from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
+
+plot_results(img_array = img, get_image = False, liver_mask = liver_mask, tumor_mask = tumor_mask)
+```
+
+Example of plot from the initial image:
+
+<img width="946" height="308" alt="image" src="https://github.com/user-attachments/assets/ca859775-e229-453c-a350-6ce8578f3bbd" />
+
+
+### 7. Analysze Outcomes
+
+Since we cannot provide the analysis model in the repository due to the large scale of the base model of Medgemma-1.5-4b available in huggingface and that the fine-tuned model is private. You should follow the RunPod Serverless API Examples guideline to access to the analysis process of our project.
+
+---
+
+## RunPod Serverless API Examples (Recommended)
+
+Here are detailed examples demonstrating how to use the RunPod serverless API with binary image encoding in base64.
+
+### Step 1: Install the runpod library (from the terminal) 
+
+```bash
+pip install runpod==1.3.0
+```
+
+### Step 2: Import all libraries
+
+```python
+import runpod
+import base64
+import os
+```
+
+### Step 3: Encode Image in Base64
+
+```python
+with open('path_to_image.jpg', 'rb') as image_file:
+    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+```
+
+### Step 4: Send Request to RunPod API
+
+```python
+endpoint = runpod.Endpoint("jmyvktagmulnfm", api_key="rpa_5C7ARZ9TEAT21XNBGA9Q16P1H151ODBOVDDU80C92xocxf")
+
+try:
+    run_request = endpoint.run_sync(
+        {
+            "image": encoded_string
+        },
+        timeout=120
+    )
+
+    print(run_request)
+except TimeoutError:
+    print("Job timed out.")
 ```
 
 ---
@@ -139,6 +237,10 @@ MIT License. See [LICENSE](LICENSE).
 ## Maintainers
 
 - **Oumar199** (GitHub: [@Oumar199](https://github.com/Oumar199))
+- **ms-dl** (Github: [@ms-sl](https://github.com/ms-dl))
+- **CheikhYakhoubMAAS** (Github: [@CheikhYakhoubMAAS](https://github.com/CheikhYakhoubMAAS))
+- **MamadouBousso** (Github: [@MamadouBousso](https://github.com/MamadouBousso))
+- **Aby1diallo** (Github: [@Aby1diallo](https://github.com/Aby1diallo))
 
 ---
 
