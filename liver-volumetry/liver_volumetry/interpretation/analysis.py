@@ -13,11 +13,11 @@ from typing import *
 import torch
 import os
 
-def get_models(models_path: str = "models\\ModelSegmentation"):
+def get_models(models_path: str = "models/ModelSegmentation"):
     """Function to load liver and tumor models
 
     Args:
-        models_path (str, optional): path to models. Defaults to "models\ModelSegmentation".
+        models_path (str, optional): path to models. Defaults to "models/ModelSegmentation".
 
     Raises:
         OSError: When liver model is not defined

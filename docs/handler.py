@@ -10,11 +10,11 @@ import os
 # tumor model filename: final_model_tumor_resunet.h5
 ######################
 
-models = get_models()
+models = get_models('/app/models/ModelSegmentation')
 
 llm_model, processor = get_llm_and_processor(model_repo = "/runpod-volume/medgemma_analysis_model", base_repo = "/runpod-volume/medgemma_base_model")
 
-TARGET_DIR = "images"
+TARGET_DIR = "/app/images"
 
 ######################
 
