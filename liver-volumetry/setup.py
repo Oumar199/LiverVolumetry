@@ -8,6 +8,7 @@ setup(
     author_email="metou.sanghe@univ-thies.sn",
     description="Contains modules to segment liver to detect fibrosis, estimate fibrosis volume, and analysis results using state of art medical LLM for diagnosis.",
     install_requires=[
+        "runpod==1.3.0",
         "numpy==2.0.2",
         "torch==2.8.0",
         "torchvision==0.23.0",
