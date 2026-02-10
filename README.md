@@ -148,7 +148,7 @@ from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 plot_results(img_array = img, get_image = False, liver_mask = liver_mask, tumor_mask = tumor_mask)
 ```
 
-Example of plot from the initial image:
+Example of plot from the initial image (Masque Foie = Liver Mask, Masque Tumeur = Tumor Mask):
 
 <img width="946" height="308" alt="image" src="https://github.com/user-attachments/assets/ca859775-e229-453c-a350-6ce8578f3bbd" />
 
