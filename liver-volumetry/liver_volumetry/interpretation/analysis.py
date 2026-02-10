@@ -123,7 +123,7 @@ def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: 
         model_repo,
         subfolder=subfolder,
         device_map="auto",
-        dtype=torch.float16
+        torch_dtype=torch.float16
     )
 
     # 🔹 Processor OFFICIEL MedGemma (OBLIGATOIRE)
@@ -151,10 +151,8 @@ def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any):
     
     overlay, volumes = identify_volumes(img, masks)
     
-    # MedGemma
-    model_llm, processor = ltp.load_medgemma_4bit()
     analysis = ltp.run_medgemma_analysis(
-        model_llm,
+        llm_model,
         processor,
         overlay,
         volumes
