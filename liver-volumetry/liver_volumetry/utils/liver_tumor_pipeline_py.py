@@ -5,7 +5,7 @@
 Some functions to help us segment, plot, analysis, ...
 """
 
-from ...liver_volumetry import *
+from liver_volumetry import *
 
 # ======================================================
 # MODELS LOADING

@@ -7,7 +7,7 @@ This repository wants to
 - use state of art google health MedGemma based model to analysis results and provide diagnosis
 """
 
-from ...liver_volumetry.utils import liver_tumor_pipeline_py as ltp
+from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 from transformers import AutoModelForImageTextToText, AutoProcessor
 from typing import *
 import torch
