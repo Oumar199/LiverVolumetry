@@ -5,6 +5,7 @@ import fasttext
 import runpod  
 import base64
 import os  
+import re
 
 
 ######################
@@ -49,7 +50,7 @@ def handler(job):
         
         img = load_image(save_path)
         
-        analysis, volumes = analysis_image(img)
+        analysis, volumes = analysis_image(img, models, llm_model, processor).split("\nmodel\n", 1)[1]
 
         return {
             "status": "success",
