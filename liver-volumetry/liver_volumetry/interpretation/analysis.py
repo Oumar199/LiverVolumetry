@@ -3,9 +3,8 @@
 
 This repository wants to 
 - get models and image from configured paths
-- do segmentation on image using liver model
-- do classification on image using tumor model
-- use state of art google health MedGemma based model to analysis results and do diagnosis
+- do segmentation and calculate tumor volume on image using liver and tumor models
+- use state of art google health MedGemma based model to analysis results and provide diagnosis
 """
 
 from ...liver_volumetry.utils import liver_tumor_pipeline_py as ltp
@@ -15,7 +14,7 @@ import torch
 import os
 
 def get_models(models_path: str = "models\\ModelSegmentation"):
-    """Function to models
+    """Function to load liver and tumor models
 
     Args:
         models_path (str, optional): path to models. Defaults to "models\ModelSegmentation".
@@ -109,7 +108,7 @@ def identify_volumes(img: Any, masks: tuple):
     
     return overlay, volumes
 
-def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: str = "bismedgemma-4bit"):
+def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: str = "bismedgemma-4bit", base_repo: str = "google/medgemma-1.5-4b-it"):
     """Get llm and processor
 
     Args:
@@ -129,7 +128,7 @@ def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: 
 
     # 🔹 Processor OFFICIEL MedGemma (OBLIGATOIRE)
     processor = AutoProcessor.from_pretrained(
-        "google/medgemma-1.5-4b-it",
+        base_repo,
         use_fast=False  # IMPORTANT
     )
     
@@ -163,7 +162,7 @@ def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any):
     
     ltp.plot_results(img, *masks)
     
-    return analysis
+    return analysis, volumes
 
 
 """## Example of output :

@@ -13,7 +13,7 @@ from ...liver_volumetry import *
 
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
     """
-    Charge les modèles de segmentation foie et tumeur (U-Net, etc.).
+    Load segmentation models (U-Net, etc.).
     """
     model_liver = load_model(liver_model_path, compile=False)
     model_tumor = load_model(tumor_model_path, compile=False)
@@ -22,7 +22,7 @@ def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
 
 def load_medgemma_4bit():
     """
-    Charge MedGemma 1.5 4B quantifié 4-bit + processor officiel.
+    Load 4-bit quantized MedGemma 1.5 4B 4-bit + base model's processor.
     """
     model_repo = "Metou/MedGemma-1.5-4B"
     subfolder = "bismedgemma-4bit"
@@ -48,7 +48,7 @@ def load_medgemma_4bit():
 
 def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
     """
-    Charge une coupe CT en niveaux de gris et la normalise.
+    Load and preprocess grayscale image.
     """
     img = load_img(
         image_path,
@@ -67,7 +67,7 @@ def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
 
 def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
     """
-    Segmentation foie + tumeur.
+    Segment liver + tumor.
     """
     liver_pred = model_liver.predict(img_array, verbose=0)
     tumor_pred = model_tumor.predict(img_array, verbose=0)
@@ -84,7 +84,7 @@ def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
 
 def build_overlay(img_array, liver_mask, tumor_mask):
     """
-    Crée une image RGB overlay :
+    Create an RGB image with overlay added :
     - fond : CT
     - foie : blanc
     - tumeur : gris
@@ -104,7 +104,7 @@ def build_overlay(img_array, liver_mask, tumor_mask):
 
 def plot_results(img_array, liver_mask, tumor_mask):
     """
-    Visualisation rapide.
+    Fast visualization with matplotlib.
     """
     plt.figure(figsize=(12, 4))
 
@@ -114,12 +114,12 @@ def plot_results(img_array, liver_mask, tumor_mask):
     plt.axis("off")
 
     plt.subplot(1, 3, 2)
-    plt.title("Masque Foie")
+    plt.title("Liver mask")
     plt.imshow(liver_mask[0, :, :, 0], cmap="jet")
     plt.axis("off")
 
     plt.subplot(1, 3, 3)
-    plt.title("Masque Tumeur")
+    plt.title("Tumor mask")
     plt.imshow(tumor_mask[0, :, :, 0], cmap="hot")
     plt.axis("off")
 
@@ -137,7 +137,7 @@ def compute_volumes(
     slice_thickness_mm=1.5
 ):
     """
-    Calcule volumes foie / tumeur et ratio tumoral.
+    Calculate liver / tumor volume and tumoral ratio.
     """
     liver_pixels = np.count_nonzero(liver_mask)
     tumor_pixels = np.count_nonzero(tumor_mask)
@@ -163,7 +163,7 @@ def compute_volumes(
 
 def build_medgemma_prompt(volumes: dict):
     """
-    Prompt multimodal MedGemma (image + texte clinique).
+    Prompt multimodal MedGemma (image + clinical text).
     """
     return [
         {
@@ -193,7 +193,7 @@ def run_medgemma_analysis(
     max_new_tokens: int = 2000
 ):
     """
-    Génération du rapport clinique par MedGemma.
+    Generating clinical reports with MedGemma.
     """
     messages = build_medgemma_prompt(volumes)
 
