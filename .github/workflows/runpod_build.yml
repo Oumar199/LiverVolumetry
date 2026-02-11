@@ -8,6 +8,14 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true  # <--- ÉTAPE CRUCIALE : Télécharge les pointeurs LFS
+
+      - name: Checkout LFS objects
+        run: git lfs pull # <--- Force le téléchargement des vrais fichiers .h5
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
