@@ -17,7 +17,7 @@ COPY images /app/images/
 RUN find /app/models -name "*.h5" -size -10M -exec echo "ERREUR: Fichier LFS non récupéré : {}" \; -exec false {} +
 
 # Installation des dépendances
-RUN pip install --no-cache-dir -e ./liver-volumetry
+RUN pip install --no-cache-dir -e ./liver-volumetry  && rm -rf /root/.cache/pip
 
 # Copie du handler
 COPY docs/handler.py .
