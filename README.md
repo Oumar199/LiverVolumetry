@@ -110,6 +110,7 @@ liver_model, tumor_model = get_models()
 ### 3. Loading an Image
 
 Images are put into the images directory and corresponds to the liver image that should be segmented and analyzed. If you have a new image placed it in the images directory and then use the `load_image` function to recuperate the image. Only the image path should be passed to the `load_image` function. You can use the example image available in the images directory.
+
 <img width="402" height="386" alt="image" src="https://github.com/user-attachments/assets/55f38b01-8b6c-4e1b-8bcb-c78ca55fa239" />
 
 
