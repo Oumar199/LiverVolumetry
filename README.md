@@ -72,47 +72,60 @@ We added automatic outcome analysis of the volumetry model using a quantized 4-b
 
 ---
 
-## Notes for Usage
+## 🚀 Quick Start & Usage
 
-If you want to use our `liver-volumetry` package follows the Usage Example section. 
+You can use the **Liver Volumetry** project in two ways, depending on your needs:
 
-However to directly analyze (recommended) a liver image using the quantized Medgemma-1.5-4b model and get all results at once, you can directly follows the steps in the RunPod Serverless API Examples section which provides access to our runpod serverless endpoint. 
+### 1. Direct Analysis (Recommended)
+
+To analyze a liver image and retrieve all results instantly, we recommend using our **RunPod Serverless API**. This method utilizes a quantized **Medgemma-1.5-4b** model for high-performance inference without local setup.
+
+👉 **Go to**: RunPod Serverless API Examples
+
+### 2. Local Package Integration
+
+If you prefer to integrate the core logic into your own environment, you can install and use the standard package.
+
+👉 **Go to**: Usage Example
 
 ---
 
-## Usage Example 
+## 🛠 Usage Guide
 
-It is possible to install our repository package and use the different functionalities. We provide below a step by step guide.
+Follow these steps to install the `liver-volumetry` package and run a complete segmentation and analysis pipeline locally.
 
-### 1. Installation (terminal only)
+### 1. Installation
 
-First clone the repository from github using `git` and enter into the directory. 
+We recommend using a virtual environment to avoid dependency conflicts.
+
 ```bash
-git clone https://github.com/Oumar199/LiverVolumetry.git
+# Clone the repository
+git clone https://github.com/Oumar/LiverVolumetry.git
 cd LiverVolumetry
-```
-To overcome version conflicts you should create an environment and install the `liver-volumetry` package in the environment.
-```bash
+
+# Setup virtual environment
 python -m venv .venv
-source .venv/bin/activate   # (Linux/Mac)
+source .venv/bin/activate  # Linux/Mac
+# .\.venv\Scripts\activate # Windows
+
+# Install the package in editable mode
 pip install -e liver-volumetry
 ```
 
-### 2. Loading Models
+### 2. Loading Segmentation Models
 
-Next you can load segmentation models using our `get_models` function. This function takes as arguments path to segmentation models. They are initially put into the models directory.
+The pipeline uses pre-trained models located in the `models/` directory by default.
 ```python
 from liver_volumetry.interpretation.analysis import get_models
 
+# Loads both liver and tumor segmentation models
 liver_model, tumor_model = get_models()
+
 ```
 
-### 3. Loading an Image
+### 3. Image Preprocessing
 
-Images are put into the images directory and corresponds to the liver image that should be segmented and analyzed. If you have a new image placed it in the images directory and then use the `load_image` function to recuperate the image. Only the image path should be passed to the `load_image` function. You can use the example image available in the images directory.
-
-<img width="402" height="386" alt="image" src="https://github.com/user-attachments/assets/55f38b01-8b6c-4e1b-8bcb-c78ca55fa239" />
-
+Place your CT scans or medical images in the `images/` directory. Use the `load_image` helper to prepare them for analysis.
 
 ```python
 from liver_volumetry.interpretation.analysis import load_image
@@ -120,88 +133,114 @@ from liver_volumetry.interpretation.analysis import load_image
 img = load_image('images/output_liver_segmentation.jpg') # modify the path as needed
 ```
 
-### 4. Segment Image
+> **Note:** An example image is provided in the repository for testing.
 
-The image, `img`, is going through a segmentation process using loaded segmentation models. image and models (as a tuple) are passed to the function `segment_image`.
+<img width="402" height="386" alt="image" src="https://github.com/user-attachments/assets/55f38b01-8b6c-4e1b-8bcb-c78ca55fa239" />
+
+
+### 4. Segmentation Pipeline
+
+Process the image through the loaded models to generate binary masks for both the liver and potential tumors.
 ```python
 from liver_volumetry.interpretation.analysis import segment_image
 
+# Returns a tuple of (liver_mask, tumor_mask)
 liver_mask, tumor_mask = segment_image(img, (liver_model, tumor_model))
+
 ```
 
-### 5. Identify Volumes
+### 5. Volumetry & Overlay Generation
 
-Next we should calculate the liver and tumor volumes and get overlay of segmentations using the `identify_volumes` function. Image and masks (as a tuple) should be passed as arguments to the function.
+Calculate the precise volumes and generate an overlay visualization.
 ```python
 from liver_volumetry.interpretation.analysis import identify_volumes
 
+# 'volumes' contains the calculated cubic measurements
 overlay, volumes = identify_volumes(img, (liver_mask, tumor_mask))
 
-print(volumes)
+print(f"Calculated Volumes: {volumes}")
+
 ```
 
-### 6. Plot Segmentations
+### 6. Visualization
 
-You can plot the results of the segmentation process using the `plot_results` function. The `get_image` argument, when equal to `True`, return the plot as a string. It should be equal to `False` to enable direct rendering of the plot. 
+To render the results directly in your notebook or UI, use the `plot_results` function.
 ```python
 from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 
-plot_results(img_array = img, get_image = False, liver_mask = liver_mask, tumor_mask = tumor_mask)
+# Set get_image=False for direct rendering
+ltp.plot_results(
+    img_array=img, 
+    liver_mask=liver_mask, 
+    tumor_mask=tumor_mask, 
+    get_image=False
+)
+
 ```
 
-Example of plot from the initial image (Masque Foie = Liver Mask, Masque Tumeur = Tumor Mask):
+**Expected Output** (Masque Foie: Liver Mask | Masque Tumeur: Tumor Mask):
 
 <img width="946" height="308" alt="image" src="https://github.com/user-attachments/assets/ca859775-e229-453c-a350-6ce8578f3bbd" />
 
 
-### 7. Analysze Outcomes
+### ⚠️ Important: Outcome Analysis
 
-Since we cannot provide the analysis model in the repository due to the large scale of the base model of Medgemma-1.5-4b available in huggingface and that the fine-tuned model is private. You should follow the RunPod Serverless API Examples guideline to access to the analysis process of our project.
+The `Medgemma-1.5-4b` model used for final clinical analysis is not included in this repository due to its large size and private license.
+
+To perform a full analysis (including AI-generated insights), please refer to the RunPod Serverless API Examples section to use our hosted endpoint.
 
 ---
 
-## RunPod Serverless API Examples (Recommended)
+## ⚡ RunPod Serverless API (Recommended)
 
-Here are detailed examples demonstrating how to use the RunPod serverless API with binary image encoding in base64.
+This method provides the most complete experience by granting access to our private **Medgemma-1.5-4b** analysis model. Since the model is hosted on our infrastructure, you can test it directly without local GPU requirements.
 
-### Step 1: Install the runpod library (from the terminal) 
+### 🧪 Quick Test (Google Colab)
+For a zero-setup experience, you can run the full analysis pipeline in one click:
 
+[![Open In Colab]([https://colab.research.google.com](https://colab.research.google.com/drive/1q4r_iafEth-1CMNoSkh5JQXreg030HQU?usp=sharing))]([https://colab.research.google.com](https://colab.research.google.com/drive/1q4r_iafEth-1CMNoSkh5JQXreg030HQU?usp=sharing))
+
+---
+
+### Local API Implementation
+
+If you prefer to integrate the API call into your own Python scripts:
+
+#### 1. Install Dependencies
 ```bash
 pip install runpod==1.3.0
 ```
 
-### Step 2: Import all libraries
+#### 2. Execute Analysis
 
 ```python
 import runpod
 import base64
-import os
+
+# Configuration (Restricted Demo Key)
+ENDPOINT_ID = "jmyvktagmulnfm"
+API_KEY = "rpa_5C7ARZ9TEAT21XNBGA9Q16P1H151ODBOVDDU80C92xocxf"
+
+def analyze_image(image_path):
+    # Encode image to Base64
+    with open(image_path, 'rb') as img_file:
+        encoded_string = base64.b64encode(img_file.read()).decode('utf-8')
+
+    endpoint = runpod.Endpoint(ENDPOINT_ID, api_key=API_KEY)
+
+    try:
+        print(f"🚀 Sending {image_path} to Medgemma-1.5-4b...")
+        result = endpoint.run_sync({"image": encoded_string}, timeout=120)
+        return result
+    except Exception as e:
+        return f"❌ Error: {e}"
+
+# Usage
+response = analyze_image('images/output_liver_segmentation.jpg')
+print(response)
+
 ```
 
-### Step 3: Encode Image in Base64
-
-```python
-with open('path_to_image.jpg', 'rb') as image_file:
-    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-```
-
-### Step 4: Send Request to RunPod API
-
-```python
-endpoint = runpod.Endpoint("jmyvktagmulnfm", api_key="rpa_5C7ARZ9TEAT21XNBGA9Q16P1H151ODBOVDDU80C92xocxf")
-
-try:
-    run_request = endpoint.run_sync(
-        {
-            "image": encoded_string
-        },
-        timeout=120
-    )
-
-    print(run_request)
-except TimeoutError:
-    print("Job timed out.")
-```
 
 ---
 
