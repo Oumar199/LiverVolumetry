@@ -213,22 +213,6 @@ except TimeoutError:
 
 ---
 
-## Testing & Development
-
-```bash
-pytest
-flake8
-black .
-```
-
----
-
-## Contributing
-
-Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
 ## License
 
 MIT License. See [LICENSE](LICENSE).
@@ -247,7 +231,7 @@ MIT License. See [LICENSE](LICENSE).
 
 ## References
 
-- *Apprentissage en profondeur pour la volumétrie du foie dans la planification préopératoire* (scientific paper description)
+- *Apprentissage en profondeur pour la volumétrie du foie dans la planification préopératoire* 
 - [3D-IRCAdb-01 dataset](https://www.ircad.fr/research/3dircadb/)
 
 ---
