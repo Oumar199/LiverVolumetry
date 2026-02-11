@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import tensorflow
 
 from transformers import AutoProcessor, AutoModelForImageTextToText
 import io
