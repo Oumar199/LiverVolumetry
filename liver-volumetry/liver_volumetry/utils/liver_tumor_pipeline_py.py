@@ -11,6 +11,7 @@ from liver_volumetry import *
 # MODELS LOADING
 # ======================================================
 
+
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
     """
     Load segmentation models (U-Net, etc.).
@@ -28,15 +29,11 @@ def load_medgemma_4bit():
     subfolder = "bismedgemma-4bit"
 
     model = AutoModelForImageTextToText.from_pretrained(
-        model_repo,
-        subfolder=subfolder,
-        device_map="auto",
-        torch_dtype=torch.float16
+        model_repo, subfolder=subfolder, device_map="auto", torch_dtype=torch.float16
     )
 
     processor = AutoProcessor.from_pretrained(
-        "google/medgemma-1.5-4b-it",
-        use_fast=False
+        "google/medgemma-1.5-4b-it", use_fast=False
     )
 
     return model, processor
@@ -46,15 +43,12 @@ def load_medgemma_4bit():
 # IMAGE PREPROCESSING
 # ======================================================
 
+
 def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
     """
     Load and preprocess grayscale image.
     """
-    img = load_img(
-        image_path,
-        target_size=target_size,
-        color_mode="grayscale"
-    )
+    img = load_img(image_path, target_size=target_size, color_mode="grayscale")
     img_array = img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     img_array = img_array / 255.0
@@ -64,6 +58,7 @@ def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
 # ======================================================
 # SEGMENTATION
 # ======================================================
+
 
 def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
     """
@@ -81,6 +76,7 @@ def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
 # ======================================================
 # VISUALIZATION / OVERLAY
 # ======================================================
+
 
 def build_overlay(img_array, liver_mask, tumor_mask):
     """
@@ -127,39 +123,38 @@ def plot_results(img_array, get_image, liver_mask, tumor_mask):
     plt.tight_layout()
 
     if get_image:
-        
+
         # Save the figure to a bytes buffer
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', bbox_inches='tight')
-        
+        plt.savefig(buf, format="png", bbox_inches="tight")
+
         # Close the plot to free memory and prevent display in interactive environments
         plt.close()
-        
+
         # Get the image data as a string (bytes)
         buf.seek(0)
         img_bytes = buf.read()
-        
+
         # Encode the bytes to a base64 string
-        img_string = base64.b64encode(img_bytes).decode('utf-8')
-        
+        img_string = base64.b64encode(img_bytes).decode("utf-8")
+
         # Close the buffer
         buf.close()
-        
+
         return img_string
-    
+
     else:
-        
+
         plt.show()
+
 
 # ======================================================
 # VOLUME COMPUTATION
 # ======================================================
 
+
 def compute_volumes(
-    liver_mask,
-    tumor_mask,
-    pixel_area_mm2=0.37,
-    slice_thickness_mm=1.5
+    liver_mask, tumor_mask, pixel_area_mm2=0.37, slice_thickness_mm=1.5
 ):
     """
     Calculate liver / tumor volume and tumoral ratio.
@@ -170,21 +165,19 @@ def compute_volumes(
     liver_volume_cm3 = (liver_pixels * pixel_area_mm2 * slice_thickness_mm) / 1000
     tumor_volume_cm3 = (tumor_pixels * pixel_area_mm2 * slice_thickness_mm) / 1000
 
-    ratio = (
-        100 * tumor_volume_cm3 / liver_volume_cm3
-        if liver_volume_cm3 > 0 else 0.0
-    )
+    ratio = 100 * tumor_volume_cm3 / liver_volume_cm3 if liver_volume_cm3 > 0 else 0.0
 
     return {
         "liver_volume_cm3": liver_volume_cm3,
         "tumor_volume_cm3": tumor_volume_cm3,
-        "tumor_ratio_percent": ratio
+        "tumor_ratio_percent": ratio,
     }
 
 
 # ======================================================
 # MEDGEMMA ANALYSIS
 # ======================================================
+
 
 def build_medgemma_prompt(volumes: dict):
     """
@@ -203,9 +196,9 @@ def build_medgemma_prompt(volumes: dict):
                         f"Tumor volume: {volumes['tumor_volume_cm3']:.2f} cm3\n"
                         f"Tumor-to-liver ratio: {volumes['tumor_ratio_percent']:.2f}%\n\n"
                         "Provide a concise clinical interpretation."
-                    )
-                }
-            ]
+                    ),
+                },
+            ],
         }
     ]
 
@@ -215,29 +208,22 @@ def run_medgemma_analysis(
     processor,
     overlay_image: Image.Image,
     volumes: dict,
-    max_new_tokens: int = 2000
+    max_new_tokens: int = 2000,
 ):
     """
     Generating clinical reports with MedGemma.
     """
     messages = build_medgemma_prompt(volumes)
 
-    prompt = processor.apply_chat_template(
-        messages,
-        add_generation_prompt=True
-    )
+    prompt = processor.apply_chat_template(messages, add_generation_prompt=True)
 
-    inputs = processor(
-        text=prompt,
-        images=overlay_image,
-        return_tensors="pt"
-    ).to(model.device)
+    inputs = processor(text=prompt, images=overlay_image, return_tensors="pt").to(
+        model.device
+    )
 
     with torch.no_grad():
         output = model.generate(
-            **inputs,
-            max_new_tokens=max_new_tokens,
-            do_sample=False
+            **inputs, max_new_tokens=max_new_tokens, do_sample=False
         )
 
     return processor.decode(output[0], skip_special_tokens=True)

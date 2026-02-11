@@ -13,6 +13,7 @@ from typing import *
 import torch
 import os
 
+
 def get_models(models_path: str = "models/ModelSegmentation"):
     """Function to load liver and tumor models
 
@@ -27,23 +28,23 @@ def get_models(models_path: str = "models/ModelSegmentation"):
         tuple: liver model, tumor model
     """
     assert os.path.exists(models_path)
-    
-    models_paths = [os.path.join(models_path, "final_model_unet_foie.h5"), 
-                   os.path.join(models_path, "final_model_tumor_resunet.h5")]
-    
+
+    models_paths = [
+        os.path.join(models_path, "final_model_unet_foie.h5"),
+        os.path.join(models_path, "final_model_tumor_resunet.h5"),
+    ]
+
     if not os.path.exists(models_paths[0]):
-        
+
         raise OSError("The liver model was not loaded in the defined directory.")
-    
+
     if not os.path.exists(models_paths[1]):
-        
+
         raise OSError("The tumor model was not loaded in the defined directory.")
-    
+
     # Charger les modèles
-    model_liver, model_tumor = ltp.load_segmentation_models(
-        *(models_paths)
-    )
-    
+    model_liver, model_tumor = ltp.load_segmentation_models(*(models_paths))
+
     return model_liver, model_tumor
 
 
@@ -57,13 +58,12 @@ def load_image(image_path: str):
         Any: image
     """
     assert os.path.exists(image_path)
-    
+
     # Charger l'image
-    img = ltp.load_and_preprocess_image(
-        image_path
-    )
-    
+    img = ltp.load_and_preprocess_image(image_path)
+
     return img
+
 
 def segment_image(img: Any, models: tuple):
     """Segment image to get regions
@@ -75,15 +75,14 @@ def segment_image(img: Any, models: tuple):
     Returns:
         tuple: liver mask, tumor mask
     """
-    
+
     liver_model, tumor_model = models
-    
+
     # Segmentation
-    liver_mask, tumor_mask = ltp.run_segmentation(
-        img, liver_model, tumor_model
-    )
-    
+    liver_mask, tumor_mask = ltp.run_segmentation(img, liver_model, tumor_model)
+
     return liver_mask, tumor_mask
+
 
 def identify_volumes(img: Any, masks: tuple):
     """Trace overlay and identify volums
@@ -100,15 +99,17 @@ def identify_volumes(img: Any, masks: tuple):
 
     # Volumes (EXEMPLE valeurs)
     volumes = ltp.compute_volumes(
-        masks[0],
-        masks[1],
-        pixel_area_mm2=0.61,
-        slice_thickness_mm=1.6
+        masks[0], masks[1], pixel_area_mm2=0.61, slice_thickness_mm=1.6
     )
-    
+
     return overlay, volumes
 
-def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: str = "bismedgemma-4bit", base_repo: str = "google/medgemma-1.5-4b-it"):
+
+def get_llm_and_processor(
+    model_repo: str = "Metou/MedGemma-1.5-4B",
+    subfolder: str = "bismedgemma-4bit",
+    base_repo: str = "google/medgemma-1.5-4b-it",
+):
     """Get llm and processor
 
     Args:
@@ -119,49 +120,41 @@ def get_llm_and_processor(model_repo: str = "Metou/MedGemma-1.5-4B", subfolder: 
     Returns:
         tuple: model, processor
     """
-    
+
     model = AutoModelForImageTextToText.from_pretrained(
-        model_repo,
-        subfolder=subfolder,
-        device_map="auto",
-        torch_dtype=torch.float16
+        model_repo, subfolder=subfolder, device_map="auto", torch_dtype=torch.float16
     )
 
     # 🔹 Processor OFFICIEL MedGemma (OBLIGATOIRE)
-    processor = AutoProcessor.from_pretrained(
-        base_repo,
-        use_fast=False  # IMPORTANT
-    )
-    
+    processor = AutoProcessor.from_pretrained(base_repo, use_fast=False)  # IMPORTANT
+
     return model, processor
 
-def analysis_image(img: Any, models: tuple, llm_model: Any, processor: Any, get_image = False):
+
+def analysis_image(
+    img: Any, models: tuple, llm_model: Any, processor: Any, get_image=False
+):
     """Plot segmentation and volumes and obtain analysis from llm
-    
+
     Args:
         img (Any): the image.
         models (tuple): the liver and tumor models.
         llm_model (Any): the llm model for analysis.
         processor (Any): the processor to process image.
         get_image (bool): indicate if image should be returned or rendered. Defaults to False.
-        
+
     Returns:
         str: analysis, volumes, image (with segmentation) string
     """
-    
+
     masks = segment_image(img, models)
-    
+
     overlay, volumes = identify_volumes(img, masks)
-    
-    analysis = ltp.run_medgemma_analysis(
-        llm_model,
-        processor,
-        overlay,
-        volumes
-    )
-    
+
+    analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes)
+
     img_string = ltp.plot_results(img, get_image, *masks)
-    
+
     return analysis, volumes, img_string
 
 
