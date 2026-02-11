@@ -21,6 +21,6 @@ setup(
         "matplotlib==3.10.0",
         "bitsandbytes>=0.46.1",
         "sentencepiece==0.2.0",
-        "protobuf==5.29.3"
+        "protobuf==5.29.3",
     ],
 )
