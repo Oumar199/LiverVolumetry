@@ -11,6 +11,8 @@ COPY liver-volumetry /app/liver-volumetry
 COPY models /app/models/
 COPY images /app/images/
 
+RUN find /app/models -name "*.h5" -size -10M -exec echo "ERREUR: Fichier LFS non récupéré : {}" \; -exec false {} +
+
 # 3. Installez en utilisant le chemin relatif (le point "." désigne le dossier courant)
 RUN pip install --no-cache-dir -e ./liver-volumetry
 
