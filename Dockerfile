@@ -1,5 +1,6 @@
 # Utilisation de l'image 'devel' au lieu de 'runtime'
 FROM nvidia/cuda:12.6.0-devel-ubuntu22.04
+ENV TF_USE_LEGACY_KERAS=1
 
 # Install Python (Note: Python 3.10 est le standard sur Ubuntu 22.04, 
 # si vous voulez spécifiquement 3.11, gardez votre ligne mais assurez-vous des liens symboliques)

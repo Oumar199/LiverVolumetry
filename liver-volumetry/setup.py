@@ -9,18 +9,18 @@ setup(
     description="Contains modules to segment liver to detect fibrosis, estimate fibrosis volume, and analysis results using state of art medical LLM for diagnosis.",
     install_requires=[
         "runpod==1.3.0",
-        "numpy==2.0.2",
-        "torch==2.8.0",
-        "torchvision==0.23.0",
-        "tensorflow==2.19.0",
-        "keras==3.10.0",
-        "transformers==4.57.1",
-        "accelerate==1.11.0",
-        "safetensors==0.6.2",
-        "pillow==11.3.0",
-        "matplotlib==3.10.0",
-        "bitsandbytes>=0.46.1",
-        "sentencepiece==0.2.0",
-        "protobuf==5.29.3",
+        "numpy<2.0.0",           # CRITIQUE : TensorFlow 2.16 ne supporte pas NumPy 2.0+
+        "torch==2.5.1",          # Version stable pour CUDA 12
+        "torchvision==0.20.1",   # Aligné sur torch 2.5.1
+        "tensorflow==2.16.1",
+        "tf-keras",              # Remplace keras 3.x pour compatibilité .h5
+        "transformers>=4.40.0",  # Version plus standard
+        "accelerate>=0.30.0",
+        "safetensors>=0.4.0",
+        "pillow>=10.0.0",
+        "matplotlib>=3.8.0",
+        "bitsandbytes>=0.42.0",
+        "sentencepiece",
+        "protobuf<=5.28.3",      # Évite les conflits de génération de code avec TF
     ],
 )
