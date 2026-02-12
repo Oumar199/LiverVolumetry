@@ -198,48 +198,7 @@ This method provides the most complete experience by granting access to our priv
 ### 🧪 Quick Test (Google Colab)
 For a zero-setup experience, you can run the full analysis pipeline in one click:
 
-[![Open In Colab]([https://colab.research.google.com](https://colab.research.google.com/drive/1q4r_iafEth-1CMNoSkh5JQXreg030HQU?usp=sharing))]([https://colab.research.google.com](https://colab.research.google.com/drive/1q4r_iafEth-1CMNoSkh5JQXreg030HQU?usp=sharing))
-
----
-
-### Local API Implementation
-
-If you prefer to integrate the API call into your own Python scripts:
-
-#### 1. Install Dependencies
-```bash
-pip install runpod==1.3.0
-```
-
-#### 2. Execute Analysis
-
-```python
-import runpod
-import base64
-
-# Configuration (Restricted Demo Key)
-ENDPOINT_ID = "jmyvktagmulnfm"
-API_KEY = "rpa_5C7ARZ9TEAT21XNBGA9Q16P1H151ODBOVDDU80C92xocxf"
-
-def analyze_image(image_path):
-    # Encode image to Base64
-    with open(image_path, 'rb') as img_file:
-        encoded_string = base64.b64encode(img_file.read()).decode('utf-8')
-
-    endpoint = runpod.Endpoint(ENDPOINT_ID, api_key=API_KEY)
-
-    try:
-        print(f"🚀 Sending {image_path} to Medgemma-1.5-4b...")
-        result = endpoint.run_sync({"image": encoded_string}, timeout=120)
-        return result
-    except Exception as e:
-        return f"❌ Error: {e}"
-
-# Usage
-response = analyze_image('images/output_liver_segmentation.jpg')
-print(response)
-
-```
+[![Open In Colab](https://colab.research.google.com)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_volumetry_serverless_test.ipynb)
 
 
 ---
