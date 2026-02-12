@@ -4,7 +4,6 @@
 ---
 Some functions to help us segment, plot, analysis, ...
 """
-
 from liver_volumetry import *
 import tensorflow as tf
 import os
@@ -16,29 +15,36 @@ import os
 
 
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
-    # ISOLATION TOTALE GPU - AUCUN contact GPU pendant chargement
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # NO GPU DEVICES
-    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
-
-    # Dummy Dropout = 0 opération TF
-    # Define NoOpLayer inheriting from tf.keras.layers.Layer
-    # and accept Dropout-specific arguments to prevent errors during deserialization
+    # --- Fix for NoOpLayer Deserialization Error ---
+    # Define a custom NoOpLayer to handle potential deserialization issues
     class NoOpLayer(tf.keras.layers.Layer):
         def __init__(self, rate=0.0, seed=None, noise_shape=None, **kwargs):
             super(NoOpLayer, self).__init__(**kwargs)
-            # These arguments are consumed but not used, as it's a no-op layer
-            self.rate = rate
-            self.seed = seed
-            self.noise_shape = noise_shape
-
         def call(self, inputs):
             return inputs
 
+    # Register the custom layer before loading models
+    tf.keras.utils.get_custom_objects().update({'NoOpLayer': NoOpLayer})
+    # Also explicitly map 'Dropout' to this NoOpLayer for global scope.
+    # This handles cases where old model architectures might contain Dropout layers
+    # that need to be treated as no-ops during loading.
+    tf.keras.utils.get_custom_objects().update({'Dropout': NoOpLayer})
+    
+    # ISOLATION TOTALE GPU - AUCUN contact GPU pendant chargement
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # NO GPU DEVICES
+    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
+    
+    
+    # Dummy Dropout = 0 opération TF
+    class NoOpLayer:
+        def __init__(self, **config): pass
+        def __call__(self, *args, **kwargs): return args[0]
+    
     models = (
         load_model(liver_model_path, compile=False, custom_objects={'Dropout': NoOpLayer}),
         load_model(tumor_model_path, compile=False, custom_objects={'Dropout': NoOpLayer})
     )
-
+    
     # GPU réactivé APRÈS pour inférence uniquement
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     return models
@@ -54,13 +60,18 @@ def load_medgemma_4bit():
     model = AutoModelForImageTextToText.from_pretrained(
         model_repo, subfolder=subfolder, device_map="auto", torch_dtype=torch.float16
     )
-
-    processor = AutoProcessor.from_pretrained(
-        model_repo, subfolder=subfolder, use_fast=False
+    
+    # Cela ne fera aucune requête réseau si les fichiers sont déjà là
+    local_dir = snapshot_download(
+        repo_id="google/medgemma-1.5-4b-it",
+        allow_patterns=["*.json", "*.txt", "tokenizer.model"],
+        ignore_patterns=["*.safetensors", "*.bin"],
+        local_files_only=True  # Optionnel : force l'utilisation exclusive du disque
     )
 
-    return model, processor
+    processor = AutoProcessor.from_pretrained(local_dir, use_fast=False)
 
+    return model, processor
 
 # ======================================================
 # IMAGE PREPROCESSING
