@@ -5,15 +5,12 @@ from liver_volumetry.interpretation.analysis import (
     analysis_image,
 )
 
-from tensorflow.keras import mixed_precision
 import runpod
 import base64
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Logs silencieux
-os.environ['KERAS_BACKEND'] = 'tensorflow'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # SILENCE
 
 
-mixed_precision.set_global_policy('mixed_float16')
 
 ######################
 # import models : models must be placed at models/ModelSegmentation
@@ -29,6 +26,9 @@ llm_model, processor = get_llm_and_processor(
 )
 
 TARGET_DIR = "/app/images"
+
+from keras import mixed_precision
+mixed_precision.set_global_policy('mixed_float16')
 
 ######################
 

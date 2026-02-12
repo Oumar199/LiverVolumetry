@@ -15,30 +15,23 @@ import os
 
 
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
-    """
-    Load segmentation models (U-Net, etc.) - FIXED for RunPod serverless.
-    """
-    # CRITIQUE: Custom Dropout qui ne touche jamais le GPU
-    class SafeDropout(Dropout):
-        def call(self, inputs, training=None):
-            if not training:
-                return inputs
-            return super().call(inputs, training=False)  # Force no-dropout
-            
-    # Force CPU + custom objects AVANT tout
-    original_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
-    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+    # ISOLATION TOTALE GPU - AUCUN contact GPU pendant chargement
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # NO GPU DEVICES
+    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
     
-    try:
-        return (
-            load_model(liver_model_path, compile=False, safe_mode=False,
-                      custom_objects={'Dropout': SafeDropout}),
-            load_model(tumor_model_path, compile=False, safe_mode=False,
-                      custom_objects={'Dropout': SafeDropout})
-        )
-        
-    finally:
-        os.environ['CUDA_VISIBLE_DEVICES'] = original_gpu
+    # Dummy Dropout = 0 opération TF
+    class NoOpLayer:
+        def __init__(self, **config): pass
+        def __call__(self, *args, **kwargs): return args[0]
+    
+    models = (
+        load_model(liver_model_path, compile=False, custom_objects={'Dropout': NoOpLayer}),
+        load_model(tumor_model_path, compile=False, custom_objects={'Dropout': NoOpLayer})
+    )
+    
+    # GPU réactivé APRÈS pour inférence uniquement
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    return models
 
 
 def load_medgemma_4bit():
