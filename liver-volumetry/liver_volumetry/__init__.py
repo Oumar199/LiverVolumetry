@@ -8,5 +8,6 @@ from keras.preprocessing.image import load_img, img_to_array
 from keras.layers import Dropout
 
 from transformers import AutoProcessor, AutoModelForImageTextToText
+from huggingface_hub import snapshot_download
 import io
 import base64

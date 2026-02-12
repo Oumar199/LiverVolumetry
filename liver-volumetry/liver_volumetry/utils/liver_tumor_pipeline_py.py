@@ -6,6 +6,7 @@ Some functions to help us segment, plot, analysis, ...
 """
 
 from liver_volumetry import *
+import tensorflow as tf
 import os
 
 
@@ -18,17 +19,26 @@ def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
     # ISOLATION TOTALE GPU - AUCUN contact GPU pendant chargement
     os.environ['CUDA_VISIBLE_DEVICES'] = ''  # NO GPU DEVICES
     os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
-    
+
     # Dummy Dropout = 0 opération TF
-    class NoOpLayer:
-        def __init__(self, **config): pass
-        def __call__(self, *args, **kwargs): return args[0]
-    
+    # Define NoOpLayer inheriting from tf.keras.layers.Layer
+    # and accept Dropout-specific arguments to prevent errors during deserialization
+    class NoOpLayer(tf.keras.layers.Layer):
+        def __init__(self, rate=0.0, seed=None, noise_shape=None, **kwargs):
+            super(NoOpLayer, self).__init__(**kwargs)
+            # These arguments are consumed but not used, as it's a no-op layer
+            self.rate = rate
+            self.seed = seed
+            self.noise_shape = noise_shape
+
+        def call(self, inputs):
+            return inputs
+
     models = (
         load_model(liver_model_path, compile=False, custom_objects={'Dropout': NoOpLayer}),
         load_model(tumor_model_path, compile=False, custom_objects={'Dropout': NoOpLayer})
     )
-    
+
     # GPU réactivé APRÈS pour inférence uniquement
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     return models
@@ -46,7 +56,7 @@ def load_medgemma_4bit():
     )
 
     processor = AutoProcessor.from_pretrained(
-        "google/medgemma-1.5-4b-it", use_fast=False
+        model_repo, subfolder=subfolder, use_fast=False
     )
 
     return model, processor

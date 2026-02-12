@@ -107,16 +107,14 @@ def identify_volumes(img: Any, masks: tuple):
 
 def get_llm_and_processor(
     model_repo: str = "Metou/MedGemma-1.5-4B",
-    subfolder: str = "bismedgemma-4bit",
-    base_repo: str = "google/medgemma-1.5-4b-it",
+    subfolder: str = "bismedgemma-4bit"
 ):
     """Get llm and processor
 
     Args:
         model_repo (str, optional): huggingface repository (or local path). Defaults to "Metou/MedGemma-1.5-4B".
         subfolder (str, optional): the subfolder to model. Defaults to "bismedgemma-4bit".
-        base_repo (str, optional): huggingface repository (or local path) to base model. Defaults to "google/medgemma-1.5-4b-it".
-
+    
     Returns:
         tuple: model, processor
     """
@@ -126,7 +124,7 @@ def get_llm_and_processor(
     )
 
     # 🔹 Processor OFFICIEL MedGemma (OBLIGATOIRE)
-    processor = AutoProcessor.from_pretrained(base_repo, use_fast=False)  # IMPORTANT
+    processor = AutoProcessor.from_pretrained(model_repo, sub_folder=subfolder, use_fast=False)  # IMPORTANT
 
     return model, processor
 
@@ -159,15 +157,6 @@ def analysis_image(
 
 
 """## Example of output :
-
-Abdominal CT slice with liver and tumor segmentation.
-
-Liver volume: 8.26 cm3
-Tumor volume: 0.53 cm3
-Tumor-to-liver ratio: 6.36%
-
-Provide a concise clinical interpretation.
-model
 This is a CT scan of the abdomen showing a small liver lesion. The liver volume is 8.26 cm3, and the tumor volume is 0.53 cm3. The tumor-to-liver ratio is 6.36%. This suggests a small liver lesion, which may be a benign or malignant tumor. Further evaluation is needed to determine the nature of the lesion.
 
 **Disclaimer:** This is an AI-generated interpretation and should not be used for medical diagnosis. A qualified healthcare professional should be consulted for any medical concerns.

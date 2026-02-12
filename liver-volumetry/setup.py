@@ -21,6 +21,7 @@ setup(
         "matplotlib>=3.8.0",
         "bitsandbytes>=0.42.0",
         "sentencepiece",
-        "protobuf<=5.28.3",      # Évite les conflits de génération de code avec TF
+        "protobuf<=5.28.3",   
+        "huggingface_hub"# Évite les conflits de génération de code avec TF
     ],
 )
