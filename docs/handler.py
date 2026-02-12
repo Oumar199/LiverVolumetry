@@ -63,8 +63,7 @@ def safe_load_llm() -> Tuple[Optional[object], Optional[object]]:
         logger.info("📥 Loading LLM models...")
         from liver_volumetry.interpretation.analysis import get_llm_and_processor
         _llm_model, _processor = get_llm_and_processor(
-            model_repo="/runpod-volume/medgemma_analysis_model",
-            base_repo="/runpod-volume/medgemma_base_model",
+            model_repo="/runpod-volume/medgemma_analysis_model"
         )
         logger.info("✅ LLM loaded successfully")
         

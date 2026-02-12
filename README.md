@@ -183,22 +183,43 @@ ltp.plot_results(
 <img width="946" height="308" alt="image" src="https://github.com/user-attachments/assets/ca859775-e229-453c-a350-6ce8578f3bbd" />
 
 
-### ⚠️ Important: Outcome Analysis
+### 🩺 AI-Powered Clinical Analysis
 
-The `Medgemma-1.5-4b` model used for final clinical analysis is not included in this repository due to its large size and private license.
+The final clinical interpretation is powered by our fine-tuned **Medgemma-1.5-4b** model. While the segmentation models are included locally, the analysis weights must be downloaded separately or accessed via API.
 
-To perform a full analysis (including AI-generated insights), please refer to the RunPod Serverless API Examples section to use our hosted endpoint.
+#### 1. Local Analysis (Advanced Users)
+To run the analysis locally, download the weights from our **Hugging Face** profile and ensure you have sufficient GPU VRAM (8GB+ recommended).
 
----
+```python
+from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 
-## ⚡ RunPod Serverless API (Recommended)
+# 1. Load the quantized Medgemma model and processor
+llm_model, processor = ltp.load_medgemma_4bit()
 
-This method provides the most complete experience by granting access to our private **Medgemma-1.5-4b** analysis model. Since the model is hosted on our infrastructure, you can test it directly without local GPU requirements.
+# 2. Run full pipeline (Segmentation + Volumetry + AI Interpretation)
+# Returns: Medical analysis text, calculated volumes, and base64 plot string
+result = ltp.analysis_image(img, models, llm_model, processor, get_image=True)
+
+# 3. Extract and display the medical interpretation
+# Splitting the result to isolate the generated clinical text
+analysis = result.split("\nmodel\n", 1)[1]
+print(f"--- Clinical Insight ---\n{analysis}")
+```
+
+#### 📝 Example Output
+
+> **Note:** The following is an example of the AI-generated interpretation:
+>
+> "This is a CT scan of the abdomen showing a small liver lesion. The liver volume is **8.26 cm³**, and the tumor volume is **0.53 cm³**. The tumor-to-liver ratio is **6.36%**. This suggests a small liver lesion, which may be a benign or malignant tumor. Further evaluation is needed."
+
+> [!CAUTION]
+> **Medical Disclaimer:** This analysis is **AI-generated** and intended for research purposes only. It must not be used for medical diagnosis. Always consult a qualified healthcare professional for medical concerns.
 
 ### 🧪 Quick Test (Google Colab)
 For a zero-setup experience, you can run the full analysis pipeline in one click:
 
 [![Open In Colab](https://colab.research.google.com)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_volumetry_serverless_test.ipynb)
+
 
 
 ---
