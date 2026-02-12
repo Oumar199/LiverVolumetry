@@ -4,9 +4,17 @@
 ---
 Some functions to help us segment, plot, analysis, ...
 """
+import tensorflow as tf
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        print("✅ GPU memory growth ACTIVATED")
+    except RuntimeError as e:
+        print(f"⚠️ GPU config warning: {e}")
 from liver_volumetry import *
 from typing import Tuple
-import tensorflow as tf
 import os
 
 
