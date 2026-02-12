@@ -14,35 +14,32 @@ import os
 # MODELS LOADING
 # ======================================================
 
-def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
-    """Chargement 100% sûr Colab T4"""
+def load_segmentation_models_simple(liver_model_path: str, tumor_model_path: str):
+    """NO GPU manip - Let TF handle everything"""
     
-    class PerfectNoOpDropout(tf.keras.layers.Dropout):
+    class SafeDropout(tf.keras.layers.Dropout):
         def __init__(self, rate=0.0, noise_shape=None, seed=None, **kwargs):
             super().__init__(rate, noise_shape=noise_shape, seed=seed, **kwargs)
         
         def call(self, inputs, training=None):
-            return inputs  # NO-OP parfait
+            if training is None:
+                training = tf.keras.backend.learning_phase()
+            # Retourne input intact (no dropout effect)
+            return tf.cond(training, lambda: inputs, lambda: inputs)
         
         def get_config(self):
             return super().get_config()
 
-    # CPU pour chargement SEUL
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''
+    print("📥 Chargement avec SafeDropout...")
     
-    try:
-        custom_objects = {'Dropout': PerfectNoOpDropout}
-        print("📥 Chargement liver model...")
-        model_liver = load_model(liver_model_path, compile=False, custom_objects=custom_objects)
-        print("📥 Chargement tumor model...")
-        model_tumor = load_model(tumor_model_path, compile=False, custom_objects=custom_objects)
-        print("✅ Models loaded PERFECTLY")
-        return model_liver, model_tumor
-        
-    finally:
-        # Nettoie - laisse TF gérer GPU
-        os.environ.pop('CUDA_VISIBLE_DEVICES', None)
-
+    # AUCUN CUDA_VISIBLE_DEVICES !!
+    custom_objects = {'Dropout': SafeDropout}
+    
+    model_liver = load_model(liver_model_path, compile=False, custom_objects=custom_objects)
+    model_tumor = load_model(tumor_model_path, compile=False, custom_objects=custom_objects)
+    
+    print("✅ Models loaded WITHOUT GPU manip")
+    return model_liver, model_tumor
 
 def load_medgemma_4bit():
     """
