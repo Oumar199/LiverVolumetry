@@ -5,6 +5,7 @@
 Some functions to help us segment, plot, analysis, ...
 """
 from liver_volumetry import *
+from typing import Tuple
 import tensorflow as tf
 import os
 
@@ -14,40 +15,45 @@ import os
 # ======================================================
 
 
-def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
-    # --- Fix for NoOpLayer Deserialization Error ---
-    # Define a custom NoOpLayer to handle potential deserialization issues
-    class NoOpLayer(tf.keras.layers.Layer):
-        def __init__(self, rate=0.0, seed=None, noise_shape=None, **kwargs):
-            super(NoOpLayer, self).__init__(**kwargs)
-        def call(self, inputs):
-            return inputs
 
-    # Register the custom layer before loading models
-    tf.keras.utils.get_custom_objects().update({'NoOpLayer': NoOpLayer})
-    # Also explicitly map 'Dropout' to this NoOpLayer for global scope.
-    # This handles cases where old model architectures might contain Dropout layers
-    # that need to be treated as no-ops during loading.
-    tf.keras.utils.get_custom_objects().update({'Dropout': NoOpLayer})
+def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
     
-    # ISOLATION TOTALE GPU - AUCUN contact GPU pendant chargement
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # NO GPU DEVICES
-    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
+    # SINGLE NoOpLayer - hérite correctement sans super() complexe
+    class NoOpDropout(tf.keras.layers.Layer):
+        def __init__(self, rate=0.0, **kwargs):
+            super(NoOpDropout, self).__init__(**kwargs)  # CORRECT super()
+            
+        def call(self, inputs, training=None):
+            return inputs  # No-op: retourne input intact
+            
+        def get_config(self):
+            # CRITIQUE pour désérialisation
+            config = super(NoOpDropout, self).get_config()
+            return config
+
+    # GPU isolation TOTALE
+    original_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # ZERO GPU
     
-    
-    # Dummy Dropout = 0 opération TF
-    class NoOpLayer:
-        def __init__(self, **config): pass
-        def __call__(self, *args, **kwargs): return args[0]
-    
-    models = (
-        load_model(liver_model_path, compile=False, custom_objects={'Dropout': NoOpLayer}),
-        load_model(tumor_model_path, compile=False, custom_objects={'Dropout': NoOpLayer})
-    )
-    
-    # GPU réactivé APRÈS pour inférence uniquement
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    return models
+    try:
+        # Registry + custom_objects
+        custom_objects = {'Dropout': NoOpDropout}
+        
+        model_liver = load_model(
+            liver_model_path, 
+            compile=False, 
+            custom_objects=custom_objects
+        )
+        model_tumor = load_model(
+            tumor_model_path, 
+            compile=False, 
+            custom_objects=custom_objects
+        )
+        
+        return model_liver, model_tumor
+        
+    finally:
+        os.environ['CUDA_VISIBLE_DEVICES'] = original_gpu  # GPU pour inférence
 
 
 def load_medgemma_4bit():
