@@ -5,14 +5,6 @@
 Some functions to help us segment, plot, analysis, ...
 """
 import tensorflow as tf
-gpus = tf.config.list_physical_devices('GPU')
-if gpus:
-    try:
-        for gpu in gpus:
-            tf.config.experimental.set_memory_growth(gpu, True)
-        print("✅ GPU memory growth ACTIVATED")
-    except RuntimeError as e:
-        print(f"⚠️ GPU config warning: {e}")
 from liver_volumetry import *
 from typing import Tuple
 import os
@@ -23,52 +15,33 @@ import os
 # ======================================================
 
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
-    """
-    FIXED: Handles ALL Dropout args + Proper inheritance + GPU isolation
-    """
+    """Chargement 100% sûr Colab T4"""
+    
     class PerfectNoOpDropout(tf.keras.layers.Dropout):
-        """Parfaitement compatible Dropout - ne fait RIEN mais accepte TOUS args"""
-        
         def __init__(self, rate=0.0, noise_shape=None, seed=None, **kwargs):
-            # CAPTURE TOUS les args Dropout
-            super(PerfectNoOpDropout, self).__init__(
-                rate=rate, 
-                noise_shape=noise_shape, 
-                seed=seed, 
-                **kwargs
-            )
+            super().__init__(rate, noise_shape=noise_shape, seed=seed, **kwargs)
         
         def call(self, inputs, training=None):
-            # NO-OP TOTAL: retourne input intact (même en training)
-            return inputs
+            return inputs  # NO-OP parfait
         
         def get_config(self):
-            # Parfaitement sérialisable
-            return super(PerfectNoOpDropout, self).get_config()
+            return super().get_config()
 
-    # GPU isolation TOTALE
-    original_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''  # ZERO GPU
+    # CPU pour chargement SEUL
+    os.environ['CUDA_VISIBLE_DEVICES'] = ''
     
     try:
         custom_objects = {'Dropout': PerfectNoOpDropout}
-        
-        model_liver = load_model(
-            liver_model_path, 
-            compile=False, 
-            custom_objects=custom_objects
-        )
-        model_tumor = load_model(
-            tumor_model_path, 
-            compile=False, 
-            custom_objects=custom_objects
-        )
-        
+        print("📥 Chargement liver model...")
+        model_liver = load_model(liver_model_path, compile=False, custom_objects=custom_objects)
+        print("📥 Chargement tumor model...")
+        model_tumor = load_model(tumor_model_path, compile=False, custom_objects=custom_objects)
         print("✅ Models loaded PERFECTLY")
         return model_liver, model_tumor
         
     finally:
-        os.environ['CUDA_VISIBLE_DEVICES'] = original_gpu
+        # Nettoie - laisse TF gérer GPU
+        os.environ.pop('CUDA_VISIBLE_DEVICES', None)
 
 
 def load_medgemma_4bit():
