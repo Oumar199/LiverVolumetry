@@ -14,30 +14,36 @@ import os
 # MODELS LOADING
 # ======================================================
 
-
-
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
-    
-    # SINGLE NoOpLayer - hérite correctement sans super() complexe
-    class NoOpDropout(tf.keras.layers.Layer):
-        def __init__(self, rate=0.0, **kwargs):
-            super(NoOpDropout, self).__init__(**kwargs)  # CORRECT super()
-            
+    """
+    FIXED: Handles ALL Dropout args + Proper inheritance + GPU isolation
+    """
+    class PerfectNoOpDropout(tf.keras.layers.Dropout):
+        """Parfaitement compatible Dropout - ne fait RIEN mais accepte TOUS args"""
+        
+        def __init__(self, rate=0.0, noise_shape=None, seed=None, **kwargs):
+            # CAPTURE TOUS les args Dropout
+            super(PerfectNoOpDropout, self).__init__(
+                rate=rate, 
+                noise_shape=noise_shape, 
+                seed=seed, 
+                **kwargs
+            )
+        
         def call(self, inputs, training=None):
-            return inputs  # No-op: retourne input intact
-            
+            # NO-OP TOTAL: retourne input intact (même en training)
+            return inputs
+        
         def get_config(self):
-            # CRITIQUE pour désérialisation
-            config = super(NoOpDropout, self).get_config()
-            return config
+            # Parfaitement sérialisable
+            return super(PerfectNoOpDropout, self).get_config()
 
     # GPU isolation TOTALE
     original_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
     os.environ['CUDA_VISIBLE_DEVICES'] = ''  # ZERO GPU
     
     try:
-        # Registry + custom_objects
-        custom_objects = {'Dropout': NoOpDropout}
+        custom_objects = {'Dropout': PerfectNoOpDropout}
         
         model_liver = load_model(
             liver_model_path, 
@@ -50,10 +56,11 @@ def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
             custom_objects=custom_objects
         )
         
+        print("✅ Models loaded PERFECTLY")
         return model_liver, model_tumor
         
     finally:
-        os.environ['CUDA_VISIBLE_DEVICES'] = original_gpu  # GPU pour inférence
+        os.environ['CUDA_VISIBLE_DEVICES'] = original_gpu
 
 
 def load_medgemma_4bit():
