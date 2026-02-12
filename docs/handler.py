@@ -9,6 +9,9 @@ from tensorflow.keras import mixed_precision
 import runpod
 import base64
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Logs silencieux
+os.environ['KERAS_BACKEND'] = 'tensorflow'
+
 
 mixed_precision.set_global_policy('mixed_float16')
 

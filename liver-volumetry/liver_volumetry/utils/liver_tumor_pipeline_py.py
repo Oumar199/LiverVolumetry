@@ -6,20 +6,37 @@ Some functions to help us segment, plot, analysis, ...
 """
 
 from liver_volumetry import *
+import os
 
 
 # ======================================================
 # MODELS LOADING
 # ======================================================
 
-
 def load_segmentation_models(liver_model_path: str, tumor_model_path: str):
     """
-    Load segmentation models (U-Net, etc.).
+    Load segmentation models (U-Net, etc.) - FIXED for RunPod serverless.
     """
-    model_liver = load_model(liver_model_path, compile=False)
-    model_tumor = load_model(tumor_model_path, compile=False)
-    return model_liver, model_tumor
+    # Force CPU loading to avoid CUDA_ERROR_INVALID_HANDLE on cold start
+    original_gpu = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+    
+    try:
+        model_liver = load_model(
+            liver_model_path, 
+            compile=False,
+            safe_mode=False  # Ignore Keras 3 strict validation
+        )
+        model_tumor = load_model(
+            tumor_model_path, 
+            compile=False,
+            safe_mode=False
+        )
+        return model_liver, model_tumor
+        
+    finally:
+        # Restore GPU for inference
+        os.environ['CUDA_VISIBLE_DEVICES'] = original_gpu
 
 
 def load_medgemma_4bit():
