@@ -4,10 +4,13 @@ from liver_volumetry.interpretation.analysis import (
     load_image,
     analysis_image,
 )
+
+from tensorflow.keras import mixed_precision
 import runpod
 import base64
 import os
 
+mixed_precision.set_global_policy('mixed_float16')
 
 ######################
 # import models : models must be placed at models/ModelSegmentation
