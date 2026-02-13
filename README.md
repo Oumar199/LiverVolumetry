@@ -90,6 +90,13 @@ If you prefer to integrate the core logic into your own environment, you can ins
 
 ---
 
+## 🧪 Quick Test (Google Colab)
+For a zero-setup experience, you can run the full analysis pipeline in one click (consider moving to t4 Tesla GPU for faster execution and restarting the session after executing the first cell):
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_tumor_volumetry_analysis.ipynb)
+
+---
+
 ## 🛠 Usage Guide
 
 Follow these steps to install the `liver-volumetry` package and run a complete segmentation and analysis pipeline locally.
@@ -214,11 +221,6 @@ print(f"--- Clinical Insight ---\n{analysis}")
 
 > [!CAUTION]
 > **Medical Disclaimer:** This analysis is **AI-generated** and intended for research purposes only. It must not be used for medical diagnosis. Always consult a qualified healthcare professional for medical concerns.
-
-### 🧪 Quick Test (Google Colab)
-For a zero-setup experience, you can run the full analysis pipeline in one click (consider restarting the session after executing the first cell):
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_tumor_volumetry_analysis.ipynb)
 
 ---
 
