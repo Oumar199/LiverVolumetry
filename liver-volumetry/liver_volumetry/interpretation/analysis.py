@@ -120,13 +120,20 @@ def get_llm_and_processor(
     """
 
     model = AutoModelForImageTextToText.from_pretrained(
-        model_repo, subfolder=subfolder, device_map="auto", torch_dtype=torch.float16
+        model_repo, 
+        subfolder=subfolder, 
+        device_map="auto", 
+        torch_dtype=torch.float16
     )
 
-    # 🔹 Processor OFFICIEL MedGemma (OBLIGATOIRE)
-    processor = AutoProcessor.from_pretrained(model_repo, sub_folder=subfolder, use_fast=False)  # IMPORTANT
+    processor = AutoProcessor.from_pretrained(
+        model_repo, 
+        subfolder=subfolder, 
+        use_fast=False
+    )
 
     return model, processor
+
 
 
 def analysis_image(
@@ -144,9 +151,8 @@ def analysis_image(
     Returns:
         str: analysis, volumes, image (with segmentation) string
     """
-
     masks = segment_image(img, models)
-
+  
     overlay, volumes = identify_volumes(img, masks)
 
     analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes)

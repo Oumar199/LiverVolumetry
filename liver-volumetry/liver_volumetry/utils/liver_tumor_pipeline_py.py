@@ -4,7 +4,6 @@
 ---
 Some functions to help us segment, plot, analysis, ...
 """
-import tensorflow as tf
 from liver_volumetry import *
 from typing import Tuple
 import os
@@ -14,31 +13,23 @@ import os
 # MODELS LOADING
 # ======================================================
 
-def load_segmentation_models_simple(liver_model_path: str, tumor_model_path: str):
-    """NO GPU manip - Let TF handle everything"""
+def load_segmentation_models(liver_path: str, tumor_path: str):
+    """100% CPU - No GPU issues"""
     
-    class SafeDropout(tf.keras.layers.Dropout):
+    class CpuSafeDropout(tf.keras.layers.Dropout):
         def __init__(self, rate=0.0, noise_shape=None, seed=None, **kwargs):
             super().__init__(rate, noise_shape=noise_shape, seed=seed, **kwargs)
         
         def call(self, inputs, training=None):
-            if training is None:
-                training = tf.keras.backend.learning_phase()
-            # Retourne input intact (no dropout effect)
-            return tf.cond(training, lambda: inputs, lambda: inputs)
-        
-        def get_config(self):
-            return super().get_config()
-
-    print("📥 Chargement avec SafeDropout...")
+            return inputs  # SIMPLEMENT retourne input
     
-    # AUCUN CUDA_VISIBLE_DEVICES !!
-    custom_objects = {'Dropout': SafeDropout}
+    print("📥 CPU Loading...")
+    custom_objects = {'Dropout': CpuSafeDropout}
     
-    model_liver = load_model(liver_model_path, compile=False, custom_objects=custom_objects)
-    model_tumor = load_model(tumor_model_path, compile=False, custom_objects=custom_objects)
+    model_liver = load_model(liver_path, compile=False, custom_objects=custom_objects)
+    model_tumor = load_model(tumor_path, compile=False, custom_objects=custom_objects)
     
-    print("✅ Models loaded WITHOUT GPU manip")
+    print("✅ CPU MODELS READY")
     return model_liver, model_tumor
 
 def load_medgemma_4bit():
@@ -46,22 +37,18 @@ def load_medgemma_4bit():
     Load 4-bit quantized MedGemma 1.5 4B 4-bit + base model's processor.
     """
     model_repo = "Metou/MedGemma-1.5-4B"
-    subfolder = "bismedgemma-4bit"
+    sub_dir = "bismedgemma-4bit"
+
+    path = snapshot_download(repo_id=model_repo, allow_patterns=f"{sub_dir}/*")
+
+    processor = AutoProcessor.from_pretrained(path, subfolder=sub_dir, use_fast=False)
 
     model = AutoModelForImageTextToText.from_pretrained(
-        model_repo, subfolder=subfolder, device_map="auto", torch_dtype=torch.float16
+        path, 
+        subfolder=sub_dir, 
+        device_map="auto", 
+        torch_dtype=torch.float16
     )
-    
-    # Cela ne fera aucune requête réseau si les fichiers sont déjà là
-    local_dir = snapshot_download(
-        repo_id="google/medgemma-1.5-4b-it",
-        allow_patterns=["*.json", "*.txt", "tokenizer.model"],
-        ignore_patterns=["*.safetensors", "*.bin"],
-        local_files_only=True  # Optionnel : force l'utilisation exclusive du disque
-    )
-
-    processor = AutoProcessor.from_pretrained(local_dir, use_fast=False)
-
     return model, processor
 
 # ======================================================
