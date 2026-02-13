@@ -197,12 +197,10 @@ from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 llm_model, processor = ltp.load_medgemma_4bit()
 
 # 2. Run full pipeline (Segmentation + Volumetry + AI Interpretation)
-# Returns: Medical analysis text, calculated volumes, and base64 plot string
-result = ltp.analysis_image(img, models, llm_model, processor, get_image=True)
+analysis, volumes, img_string = ltp.analysis_image(img, models, llm_model, processor, get_image=True)
 
 # 3. Extract and display the medical interpretation
-# Splitting the result to isolate the generated clinical text
-analysis = result.split("\nmodel\n", 1)[1]
+analysis = analysis.split("\nmodel\n", 1)[1]
 print(f"--- Clinical Insight ---\n{analysis}")
 ```
 
@@ -216,11 +214,9 @@ print(f"--- Clinical Insight ---\n{analysis}")
 > **Medical Disclaimer:** This analysis is **AI-generated** and intended for research purposes only. It must not be used for medical diagnosis. Always consult a qualified healthcare professional for medical concerns.
 
 ### 🧪 Quick Test (Google Colab)
-For a zero-setup experience, you can run the full analysis pipeline in one click:
+For a zero-setup experience, you can run the full analysis pipeline in one click (consider restarting the session after executing the first cell):
 
-[![Open In Colab](https://colab.research.google.com)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_volumetry_serverless_test.ipynb)
-
-
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_volumetry_serverless_test.ipynb)
 
 ---
 
