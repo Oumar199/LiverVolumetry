@@ -14,9 +14,7 @@ import os
 # ======================================================
 
 def load_segmentation_models(liver_path: str, tumor_path: str):
-    """100% CPU - No GPU issues"""
-    
-    class CpuSafeDropout(tf.keras.layers.Dropout):
+    class CpuSafeDropout(Dropout):
         def __init__(self, rate=0.0, noise_shape=None, seed=None, **kwargs):
             super().__init__(rate, noise_shape=noise_shape, seed=seed, **kwargs)
         
