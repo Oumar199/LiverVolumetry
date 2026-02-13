@@ -188,16 +188,18 @@ ltp.plot_results(
 The final clinical interpretation is powered by our fine-tuned **Medgemma-1.5-4b** model. While the segmentation models are included locally, the analysis weights must be downloaded separately or accessed via API.
 
 #### 1. Local Analysis (Advanced Users)
-To run the analysis locally, download the weights from our **Hugging Face** profile and ensure you have sufficient GPU VRAM (8GB+ recommended).
+To run the analysis locally, download the quantized weights from our **Hugging Face** profile.
 
 ```python
+from liver_volumetry.interpretation.analysis import analysis_image
 from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 
 # 1. Load the quantized Medgemma model and processor
 llm_model, processor = ltp.load_medgemma_4bit()
 
 # 2. Run full pipeline (Segmentation + Volumetry + AI Interpretation)
-analysis, volumes, img_string = ltp.analysis_image(img, models, llm_model, processor, get_image=True)
+models = (liver_model, tumor_model)
+analysis, volumes, img_string = analysis_image(img, models, llm_model, processor, get_image=True)
 
 # 3. Extract and display the medical interpretation
 analysis = analysis.split("\nmodel\n", 1)[1]
