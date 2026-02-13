@@ -216,7 +216,7 @@ print(f"--- Clinical Insight ---\n{analysis}")
 ### 🧪 Quick Test (Google Colab)
 For a zero-setup experience, you can run the full analysis pipeline in one click (consider restarting the session after executing the first cell):
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_volumetry_serverless_test.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Oumar199/LiverVolumetry/blob/main/liver_tumor_volumetry_analysis.ipynb)
 
 ---
 
