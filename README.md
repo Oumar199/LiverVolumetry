@@ -86,7 +86,7 @@ To analyze a liver image and retrieve all results instantly, we recommend using 
 
 If you prefer to integrate the core logic into your own environment, you can install and use the standard package.
 
-👉 **Go to**: Usage Example
+👉 **Go to**: Usage Guide
 
 ---
 
