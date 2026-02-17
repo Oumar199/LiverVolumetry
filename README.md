@@ -227,6 +227,12 @@ from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 # 1. Load the quantized Medgemma model and processor
 llm_model, processor = ltp.load_medgemma_4bit()
 
+# 1. if you are planning to use the base Medgemma model and processor
+# uncomment the three following lines
+# from huggingface_hub import login
+# login() # log into your huggingface account 
+# llm_model, processor = ltp.load_medgemma()
+
 # 2. Run full pipeline (Segmentation + Volumetry + AI Interpretation)
 models = (liver_model, tumor_model)
 analysis, volumes, img_string = analysis_image(img, models, llm_model, processor, get_image=True)
