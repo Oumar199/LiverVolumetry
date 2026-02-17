@@ -25,6 +25,8 @@ def handler(job):
     
     job_input = job.get("input", {}) or {}
     image_base64 = job_input.get("image")
+    max_new_tokens = job_input.get("max_new_tokens", 2000)
+    do_sample = job_input.get("do_sample", True)
     
     if not image_base64:
         logger.warning("⚠️ No image received")

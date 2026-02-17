@@ -49,10 +49,26 @@ def load_medgemma_4bit():
     )
     return model, processor
 
+def load_medgemma():
+    """
+    Load MedGemma 1.5 4B + processor.
+    """
+    model_repo = "google/medgemma-1.5-4b-it"
+
+    path = snapshot_download(repo_id=model_repo)
+
+    processor = AutoProcessor.from_pretrained(path, token=True)
+
+    model = AutoModelForImageTextToText.from_pretrained(
+        path, 
+        device_map="auto", 
+        torch_dtype=torch.float16
+    )
+    return model, processor
+
 # ======================================================
 # IMAGE PREPROCESSING
 # ======================================================
-
 
 def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
     """
@@ -68,7 +84,6 @@ def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
 # ======================================================
 # SEGMENTATION
 # ======================================================
-
 
 def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
     """

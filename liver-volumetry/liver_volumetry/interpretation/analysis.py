@@ -108,36 +108,54 @@ def identify_volumes(img: Any, masks: tuple):
 def get_llm_and_processor(
     model_repo: str = "Metou/MedGemma-1.5-4B",
     subfolder: str = "bismedgemma-4bit",
-    from_local_files = True
+    from_local_files: bool = True,
+    quantized: bool = True
 ):
     """Get llm and processor
 
     Args:
         model_repo (str, optional): huggingface repository (or local path). Defaults to "Metou/MedGemma-1.5-4B".
-        subfolder (str, optional): the subfolder to model. Defaults to "bismedgemma-4bit".
+        subfolder (str, optional): the subfolder to quantized model for drastic differentiation and abstraction. Defaults to "bismedgemma-4bit".
         from_local_files (bool, optional): Indicates if the model and processor are got from local files. Defaults to True.
-    
+        quantized (bool, optional): Indicates if we want to use the quantized version of the model. Defaults to True.
+        
     Returns:
         tuple: model, processor
     """
 
-    model = AutoModelForImageTextToText.from_pretrained(
-        model_repo, 
-        subfolder=subfolder, 
-        device_map="auto", 
-        torch_dtype=torch.float16,
-        local_files_only=from_local_files
-    )
+    if quantized:
+        
+        model = AutoModelForImageTextToText.from_pretrained(
+            model_repo, 
+            subfolder=subfolder, 
+            device_map="auto", 
+            torch_dtype=torch.float16,
+            local_files_only=from_local_files
+        )
 
-    processor = AutoProcessor.from_pretrained(
-        model_repo, 
-        subfolder=subfolder, 
-        use_fast=False,
-        local_files_only=from_local_files
-    )
+        processor = AutoProcessor.from_pretrained(
+            model_repo, 
+            subfolder=subfolder, 
+            use_fast=False,
+            local_files_only=from_local_files
+        )
+    
+    else:
+        
+        model = AutoModelForImageTextToText.from_pretrained(
+            model_repo, 
+            device_map="auto", 
+            torch_dtype=torch.float16,
+            local_files_only=from_local_files
+        )
+
+        processor = AutoProcessor.from_pretrained(
+            model_repo, 
+            token=True,
+            local_files_only=from_local_files
+        )
 
     return model, processor
-
 
 
 def analysis_image(
