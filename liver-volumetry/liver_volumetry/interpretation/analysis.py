@@ -159,7 +159,7 @@ def get_llm_and_processor(
 
 
 def analysis_image(
-    img: Any, models: tuple, llm_model: Any, processor: Any, get_image=False
+    img: Any, models: tuple, llm_model: Any, processor: Any, get_image=False, do_sample=False
 ):
     """Plot segmentation and volumes and obtain analysis from llm
 
@@ -168,7 +168,8 @@ def analysis_image(
         models (tuple): the liver and tumor models.
         llm_model (Any): the llm model for analysis.
         processor (Any): the processor to process image.
-        get_image (bool): indicate if image should be returned or rendered. Defaults to False.
+        get_image (bool, optional): indicate if image should be returned or rendered. Defaults to False.
+        do_sample (bool, optional): indicate if you include sampling in the generation process. Defaults to False.
 
     Returns:
         str: analysis, volumes, image (with segmentation) string
@@ -177,7 +178,7 @@ def analysis_image(
   
     overlay, volumes = identify_volumes(img, masks)
 
-    analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes)
+    analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes, do_sample)
 
     img_string = ltp.plot_results(img, get_image, *masks)
 

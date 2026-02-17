@@ -234,6 +234,7 @@ def run_medgemma_analysis(
     overlay_image: Image.Image,
     volumes: dict,
     max_new_tokens: int = 2000,
+    do_sample: bool = False
 ):
     """
     Generating clinical reports with MedGemma.
@@ -248,7 +249,7 @@ def run_medgemma_analysis(
 
     with torch.no_grad():
         output = model.generate(
-            **inputs, max_new_tokens=max_new_tokens, do_sample=False
+            **inputs, max_new_tokens=max_new_tokens, do_sample=do_sample
         )
 
     return processor.decode(output[0], skip_special_tokens=True)
