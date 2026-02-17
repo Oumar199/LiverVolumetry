@@ -163,7 +163,8 @@ img = load_image('images/output_liver_segmentation.jpg') # modify the path as ne
 
 > **Note:** An example image is provided in the repository for testing.
 
-<img width="402" height="386" alt="image" src="https://github.com/user-attachments/assets/55f38b01-8b6c-4e1b-8bcb-c78ca55fa239" />
+<img width="265" height="258" alt="image" src="https://github.com/user-attachments/assets/0f65c42d-ed57-428f-9ff1-ec107adc4e08" />
+
 
 
 ### 4. Segmentation Pipeline
@@ -208,7 +209,8 @@ ltp.plot_results(
 
 **Expected Output** (Masque Foie: Liver Mask | Masque Tumeur: Tumor Mask):
 
-<img width="946" height="308" alt="image" src="https://github.com/user-attachments/assets/ca859775-e229-453c-a350-6ce8578f3bbd" />
+<img width="943" height="307" alt="image" src="https://github.com/user-attachments/assets/f3164299-6f08-41c8-8a32-5710d4163e5d" />
+
 
 
 ### 🩺 AI-Powered Clinical Analysis
@@ -248,7 +250,7 @@ print(f"--- Clinical Insight ---\n{analysis}")
 ## Data & Model Information
 
 - **Dataset:** 3D-IRCAdb-01 public CT scans (20 patients)
-- **Models:** Pre-trained neural networks available under `models/` and quantized **Medgemma-1.5-4b** available in our Huggingface repository.
+- **Models:** Pre-trained neural networks (`Metou/ModelSegmentation`) and quantized **Medgemma-1.5-4b** (`Metou/MedGemma-1.5-4B`) available in our huggingface repositories.
 - **No real patient data** is included in the repository; all examples use synthetic or public data.
 
 ---
