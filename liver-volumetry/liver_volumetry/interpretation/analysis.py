@@ -14,12 +14,23 @@ from typing import *
 import torch
 import os
 
-def download_segmentation_models(hf_id: str = "Metou/ModelSegmentation", local_directory: str = "models"):
+
+def download_segmentation_models(
+    hf_id: str = "Metou/ModelSegmentation", local_directory: str = "models"
+):
     """Download segmentation models from our huggingface account
+
+    Args:
+        hf_id (str, optional): The huggingface model id. Defaults to "Metou/ModelSegmentation".
+        local_directory (str, optional): local directory in which we are going to place the models. Defaults to "models".
+
+    Returns:
+        str: the path to the segmentation models
     """
     path = snapshot_download(hf_id, local_dir=local_directory)
-    
+
     return path
+
 
 def get_models(models_path: str = "models/ModelSegmentation"):
     """Function to load liver and tumor models
@@ -116,7 +127,7 @@ def get_llm_and_processor(
     model_repo: str = "Metou/MedGemma-1.5-4B",
     subfolder: str = "bismedgemma-4bit",
     from_local_files: bool = True,
-    quantized: bool = True
+    quantized: bool = True,
 ):
     """Get llm and processor
 
@@ -125,48 +136,52 @@ def get_llm_and_processor(
         subfolder (str, optional): the subfolder to quantized model for drastic differentiation and abstraction. Defaults to "bismedgemma-4bit".
         from_local_files (bool, optional): Indicates if the model and processor are got from local files. Defaults to True.
         quantized (bool, optional): Indicates if we want to use the quantized version of the model. Defaults to True.
-        
+
     Returns:
         tuple: model, processor
     """
 
     if quantized:
-        
+
         model = AutoModelForImageTextToText.from_pretrained(
-            model_repo, 
-            subfolder=subfolder, 
-            device_map="auto", 
+            model_repo,
+            subfolder=subfolder,
+            device_map="auto",
             torch_dtype=torch.float16,
-            local_files_only=from_local_files
+            local_files_only=from_local_files,
         )
 
         processor = AutoProcessor.from_pretrained(
-            model_repo, 
-            subfolder=subfolder, 
+            model_repo,
+            subfolder=subfolder,
             use_fast=False,
-            local_files_only=from_local_files
+            local_files_only=from_local_files,
         )
-    
+
     else:
-        
+
         model = AutoModelForImageTextToText.from_pretrained(
-            model_repo, 
-            device_map="auto", 
+            model_repo,
+            device_map="auto",
             torch_dtype=torch.float16,
-            local_files_only=from_local_files
+            local_files_only=from_local_files,
         )
 
         processor = AutoProcessor.from_pretrained(
-            model_repo, 
-            token=True,
-            local_files_only=from_local_files
+            model_repo, token=True, local_files_only=from_local_files
         )
 
     return model, processor
 
 
 def analysis_image(
-    img: Any, models: tuple, llm_model: Any, processor: Any, get_image=False, max_new_tokens: int = 2000, do_sample=False
+    img: Any,
+    models: tuple,
+    llm_model: Any,
+    processor: Any,
+    get_image=False,
+    max_new_tokens: int = 2000,
+    do_sample=False,
 ):
     """Plot segmentation and volumes and obtain analysis from llm
 
@@ -183,10 +198,12 @@ def analysis_image(
         str: analysis, volumes, image (with segmentation) string
     """
     masks = segment_image(img, models)
-  
+
     overlay, volumes = identify_volumes(img, masks)
 
-    analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes, max_new_tokens, do_sample)
+    analysis = ltp.run_medgemma_analysis(
+        llm_model, processor, overlay, volumes, max_new_tokens, do_sample
+    )
 
     img_string = ltp.plot_results(img, get_image, *masks)
 

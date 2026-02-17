@@ -13,22 +13,24 @@ import os
 # MODELS LOADING
 # ======================================================
 
+
 def load_segmentation_models(liver_path: str, tumor_path: str):
     class CpuSafeDropout(Dropout):
         def __init__(self, rate=0.0, noise_shape=None, seed=None, **kwargs):
             super().__init__(rate, noise_shape=noise_shape, seed=seed, **kwargs)
-        
+
         def call(self, inputs, training=None):
             return inputs  # SIMPLEMENT retourne input
-    
+
     print("📥 CPU Loading...")
-    custom_objects = {'Dropout': CpuSafeDropout}
-    
+    custom_objects = {"Dropout": CpuSafeDropout}
+
     model_liver = load_model(liver_path, compile=False, custom_objects=custom_objects)
     model_tumor = load_model(tumor_path, compile=False, custom_objects=custom_objects)
-    
+
     print("✅ CPU MODELS READY")
     return model_liver, model_tumor
+
 
 def load_medgemma_4bit():
     """
@@ -42,12 +44,10 @@ def load_medgemma_4bit():
     processor = AutoProcessor.from_pretrained(path, subfolder=sub_dir, use_fast=False)
 
     model = AutoModelForImageTextToText.from_pretrained(
-        path, 
-        subfolder=sub_dir, 
-        device_map="auto", 
-        torch_dtype=torch.float16
+        path, subfolder=sub_dir, device_map="auto", torch_dtype=torch.float16
     )
     return model, processor
+
 
 def load_medgemma():
     """
@@ -60,15 +60,15 @@ def load_medgemma():
     processor = AutoProcessor.from_pretrained(path, token=True)
 
     model = AutoModelForImageTextToText.from_pretrained(
-        path, 
-        device_map="auto", 
-        torch_dtype=torch.float16
+        path, device_map="auto", torch_dtype=torch.float16
     )
     return model, processor
+
 
 # ======================================================
 # IMAGE PREPROCESSING
 # ======================================================
+
 
 def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
     """
@@ -84,6 +84,7 @@ def load_and_preprocess_image(image_path: str, target_size=(256, 256)):
 # ======================================================
 # SEGMENTATION
 # ======================================================
+
 
 def run_segmentation(img_array, model_liver, model_tumor, threshold=0.5):
     """
@@ -234,7 +235,7 @@ def run_medgemma_analysis(
     overlay_image: Image.Image,
     volumes: dict,
     max_new_tokens: int = 2000,
-    do_sample: bool = False
+    do_sample: bool = False,
 ):
     """
     Generating clinical reports with MedGemma.

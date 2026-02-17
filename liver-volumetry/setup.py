@@ -9,8 +9,8 @@ setup(
     description="Contains modules to segment liver to detect fibrosis, estimate liver and tumor volumes, and analysis results using state of art medical LLM for diagnosis.",
     install_requires=[
         "runpod==1.3.0",
-        "torch==2.6",         
-        "torchvision",  
+        "torch==2.6",
+        "torchvision",
         "tensorflow>=2.16.1",
         "keras>=3.4.0",  # Remplace tf-keras
         "numpy<2.0.0",
@@ -21,7 +21,7 @@ setup(
         "matplotlib>=3.8.0",
         "bitsandbytes>=0.42.0",
         "sentencepiece",
-        "protobuf<=5.28.3",   
-        "huggingface_hub"# Évite les conflits de génération de code avec TF
+        "protobuf<=5.28.3",
+        "huggingface_hub",  # Évite les conflits de génération de code avec TF
     ],
 )
