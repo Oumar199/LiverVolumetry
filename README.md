@@ -43,6 +43,24 @@ We added automatic outcome analysis of the volumetry model using a quantized 4-b
 
 - **Contribution:** The repository now supports outcome analysis via the Medgemma 1.5-4b model quantized to 4-bit, enabling fast and memory-efficient clinical summarization.  
 - **Workflow:** Results from the volumetry pipeline are passed to Medgemma for automated interpretation and report generation, facilitating clinical adoption.
+- **MedGemma Liver Tumor Volume Interpretation Template Example** For multimodal input with segmentation volumes:
+
+```json
+[
+  {
+    "role": "user",
+    "content": [
+      {
+        "type": "image"
+      },
+      {
+        "type": "text",
+        "text": "Abdominal CT slice with liver and tumor segmentation.\n\nLiver volume: 8.26 cm³\nTumor volume: 0.53 cm³\nTumor-to-liver ratio: 6.36%\n\nProvide a concise clinical interpretation."
+      }
+    ]
+  }
+]
+```
 
 ---
 
@@ -78,15 +96,15 @@ You can use the **Liver Volumetry** project in two ways, depending on your needs
 
 ### 1. Direct Analysis (Recommended)
 
-To analyze a liver image and retrieve all results instantly, we recommend using our **RunPod Serverless API**. This method utilizes a quantized **Medgemma-1.5-4b** model for high-performance inference without local setup.
+To analyze a liver image and retrieve all results instantly, we recommend using a **RunPod Serverless API**. This method utilizes a quantized **Medgemma-1.5-4b** model for high-performance inference without local setup. We provide in this repository all necessary elements to deploy a Runpod Serverless API from Github.
 
-👉 **Go to**: RunPod Serverless API Examples
+👉 **Go to**: [Deploy workers from GitHub](https://docs.runpod.io/serverless/workers/github-integration) and follow the deployment process.
 
 ### 2. Local Package Integration
 
 If you prefer to integrate the core logic into your own environment, you can install and use the standard package.
 
-👉 **Go to**: Usage Guide
+👉 **Go to**: [Usage Guide](https://github.com/Oumar199/LiverVolumetry/edit/main/README.md#-usage-guide)
 
 ---
 
