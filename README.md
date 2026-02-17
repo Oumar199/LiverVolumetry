@@ -144,7 +144,7 @@ The pipeline uses pre-trained models that we are going do download from huggingf
 from liver_volumetry.interpretation.analysis import get_models,  download_segmentation_models
 
 # downloading models our huggingface account and getting the path
-path = download_segmentation_models("")
+path = download_segmentation_models()
 
 # Loads both liver and tumor segmentation models
 liver_model, tumor_model = get_models(path)

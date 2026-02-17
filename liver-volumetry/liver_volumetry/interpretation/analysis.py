@@ -14,7 +14,7 @@ from typing import *
 import torch
 import os
 
-def download_segmentation_models(hf_id: str = ""):
+def download_segmentation_models(hf_id: str = "Metou/ModelSegmentation"):
     """Download segmentation models from our huggingface account
     """
     path = snapshot_download(hf_id, local_dir="models")
