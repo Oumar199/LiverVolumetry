@@ -9,10 +9,17 @@ This repository wants to
 
 from liver_volumetry.utils import liver_tumor_pipeline_py as ltp
 from transformers import AutoModelForImageTextToText, AutoProcessor
+from huggingface_hub import snapshot_download
 from typing import *
 import torch
 import os
 
+def download_segmentation_models(hf_id: str = ""):
+    """Download segmentation models from our huggingface account
+    """
+    path = snapshot_download(hf_id, local_dir="models")
+    
+    return path
 
 def get_models(models_path: str = "models/ModelSegmentation"):
     """Function to load liver and tumor models
