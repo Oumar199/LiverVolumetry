@@ -60,7 +60,7 @@ def load_medgemma():
     processor = AutoProcessor.from_pretrained(path, token=True)
 
     model = AutoModelForImageTextToText.from_pretrained(
-        path, device_map="auto", torch_dtype=torch.float16
+        path, device_map="auto", torch_dtype="auto"
     )
     return model, processor
 
