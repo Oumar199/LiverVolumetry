@@ -159,7 +159,7 @@ def get_llm_and_processor(
 
 
 def analysis_image(
-    img: Any, models: tuple, llm_model: Any, processor: Any, get_image=False, do_sample=False
+    img: Any, models: tuple, llm_model: Any, processor: Any, get_image=False, max_new_tokens: int = 2000, do_sample=False
 ):
     """Plot segmentation and volumes and obtain analysis from llm
 
@@ -169,6 +169,7 @@ def analysis_image(
         llm_model (Any): the llm model for analysis.
         processor (Any): the processor to process image.
         get_image (bool, optional): indicate if image should be returned or rendered. Defaults to False.
+        max_new_tokens (int, optional): the maximum number of new tokens. Defaults to 2000.
         do_sample (bool, optional): indicate if you include sampling in the generation process. Defaults to False.
 
     Returns:
@@ -178,7 +179,7 @@ def analysis_image(
   
     overlay, volumes = identify_volumes(img, masks)
 
-    analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes, do_sample)
+    analysis = ltp.run_medgemma_analysis(llm_model, processor, overlay, volumes, max_new_tokens, do_sample)
 
     img_string = ltp.plot_results(img, get_image, *masks)
 
