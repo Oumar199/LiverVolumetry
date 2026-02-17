@@ -86,7 +86,7 @@ To analyze a liver image and retrieve all results instantly, we recommend using 
 
 If you prefer to integrate the core logic into your own environment, you can install and use the standard package.
 
-👉 **Go to**: Usage Example
+👉 **Go to**: Usage Guide
 
 ---
 
@@ -192,7 +192,7 @@ ltp.plot_results(
 
 ### 🩺 AI-Powered Clinical Analysis
 
-The final clinical interpretation is powered by our fine-tuned **Medgemma-1.5-4b** model. While the segmentation models are included locally, the analysis weights must be downloaded separately or accessed via API.
+The final clinical interpretation is powered by the quantized **Medgemma-1.5-4b**  model. While the segmentation models are included locally, the analysis weights must be downloaded separately or accessed via API.
 
 #### 1. Local Analysis (Advanced Users)
 To run the analysis locally, download the quantized weights from our **Hugging Face** profile.
@@ -227,7 +227,7 @@ print(f"--- Clinical Insight ---\n{analysis}")
 ## Data & Model Information
 
 - **Dataset:** 3D-IRCAdb-01 public CT scans (20 patients)
-- **Models:** Pre-trained neural networks and quantized Medgemma available under `models/`
+- **Models:** Pre-trained neural networks available under `models/` and quantized **Medgemma-1.5-4b** available in our Huggingface repository.
 - **No real patient data** is included in the repository; all examples use synthetic or public data.
 
 ---
