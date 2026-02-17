@@ -14,10 +14,10 @@ from typing import *
 import torch
 import os
 
-def download_segmentation_models(hf_id: str = "Metou/ModelSegmentation"):
+def download_segmentation_models(hf_id: str = "Metou/ModelSegmentation", local_directory: str = "models"):
     """Download segmentation models from our huggingface account
     """
-    path = snapshot_download(hf_id, local_dir="models")
+    path = snapshot_download(hf_id, local_dir=local_directory)
     
     return path
 

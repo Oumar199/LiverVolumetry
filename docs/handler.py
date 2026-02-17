@@ -11,12 +11,13 @@ logger = logging.getLogger(__name__)
 # Global variables with lazy initialization
 TARGET_DIR = "/app/images"
 
-from liver_volumetry.interpretation.analysis import get_models
+from liver_volumetry.interpretation.analysis import get_models, download_segmentation_models
 from liver_volumetry.interpretation.analysis import get_llm_and_processor
 from liver_volumetry.interpretation.analysis import load_image, analysis_image
         
 
-models = get_models("/app/models/ModelSegmentation")
+path = download_segmentation_models(local_directory="/app/models")
+models = get_models(path)
 llm_model, processor = get_llm_and_processor(
     model_repo="/runpod-volume/medgemma_analysis_model"
 )
