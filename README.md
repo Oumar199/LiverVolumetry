@@ -306,3 +306,13 @@ MIT License. See [LICENSE](LICENSE).
 ## Disclaimer
 
 This is not a substitute for professional medical advice. Outputs should be validated with clinical experts before deployment. Do not use real patient data in this repository.
+
+## Citation
+```bibtex
+@misc{snaimasters2026livervolumetry,
+  title={Liver Volumetry},
+  author={Metou SANGHE, Aby DIALLO, Mamadou BOUSSO, Oumar KANE, Cheikh Yakhoub MAAS},
+  howpublished={https://github.com/Oumar199/LiverVolumetry},
+  year={2026}
+}
+```
