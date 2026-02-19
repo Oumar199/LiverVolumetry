@@ -270,6 +270,32 @@ print(f"--- Clinical Insight ---\n{analysis}")
 > [!CAUTION]
 > **Medical Disclaimer:** This analysis is **AI-generated** and intended for research purposes only. It must not be used for medical diagnosis. Always consult a qualified healthcare professional for medical concerns.
 
+#### 📄 Medical Report Generation
+
+Once the analysis is complete, you can generate a comprehensive PDF medical report. This process involves two steps: first, saving the segmented image locally, and then compiling the final document.
+
+```python
+from liver_volumetry.utils.save_image import save_base64_image
+from liver_volumetry.interpretation.prepare_report import generate_medical_report
+
+# 1. Save the segmented image locally (converts base64 string from analysis_image)
+image_path = save_base64_image(img_string)
+
+# 2. Generate the final medical report as a PDF
+generate_medical_report(
+    output_pdf="liver_report.pdf", 
+    patient_name="Jean Dupont", 
+    seg_path=image_path, 
+    clinical_analysis=analysis
+)
+```
+
+**Expected Report** 
+
+<img width="488" height="678" alt="image" src="https://github.com/user-attachments/assets/859b6c32-c675-43ae-99f3-9064c8e150e5" />
+
+
+
 ---
 
 ## Data & Model Information
