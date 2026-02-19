@@ -6,6 +6,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, HRFl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import inch
+import markdown
 
 def generate_medical_report(output_pdf: str, patient_name: str, seg_path: str, clinical_analysis: str, illustration_path:str = "images/20260217_2225_Liver Volumetry Analysis_remix_01khpv8yqrekbvrwrh52jb4m22.png"):
     
@@ -43,8 +44,8 @@ def generate_medical_report(output_pdf: str, patient_name: str, seg_path: str, c
     # --- 4. Clinical analysis ---
     analysis_style = ParagraphStyle('Analysis', parent=styles['Normal'], fontSize=11, leading=19) 
     
-    story.append(Paragraph(f"""<b>Clinical Assessment & Findings:</b><br/>
-{clinical_analysis.replace('**', "<strong>")}""", analysis_style))
+    story.append(Paragraph(markdown.markdown(f"""**Clinical Assessment & Findings:**\n
+{clinical_analysis}"""), analysis_style))
 
     # Génération du PDF
     doc.build(story)
