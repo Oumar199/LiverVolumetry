@@ -44,7 +44,7 @@ def generate_medical_report(output_pdf: str, patient_name: str, seg_path: str, c
     analysis_style = ParagraphStyle('Analysis', parent=styles['Normal'], fontSize=11, leading=19) 
     
     story.append(Paragraph(f"""<b>Clinical Assessment & Findings:</b><br/>
-{clinical_analysis.replace('**', "<b>")}""", analysis_style))
+{clinical_analysis.replace('**', "<strong>")}""", analysis_style))
 
     # Génération du PDF
     doc.build(story)
