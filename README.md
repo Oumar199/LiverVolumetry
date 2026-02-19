@@ -3,6 +3,11 @@
 **Deep Learning for Liver and Tumor Volumetry in Preoperative Planning**  
 _Estimation précise des volumes tumoraux et hépatiques pour le CHC, avec segmentation automatique et analyse avancée._
 
+<img width="1432" height="953" alt="image" src="https://github.com/user-attachments/assets/7a5feef7-e7da-43c6-a4fc-12b267dba18b" />
+
+
+
+
 ## Description
 
 LiverVolumetry is an open-source Python package for automatic segmentation and volumetric analysis of the liver and tumors, based on deep learning. Developed within the context of Senegalese medical workflows, the repository implements and extends state-of-the-art algorithms for preoperative planning in hepatocellular carcinoma (HCC) and related pathologies. It facilitates reproducible, scalable, and clinically relevant volumetry from DICOM images, with support for data normalization, robust experimentation, and advanced model integration.
@@ -61,6 +66,20 @@ We added automatic outcome analysis of the volumetry model using a quantized 4-b
   }
 ]
 ```
+
+## MedGemma's Contribution to Liver Volumetry
+
+MedGemma has greatly enhanced the accuracy and efficiency of liver volumetry through its advanced integration into the existing framework. The following outlines its significant contributions:
+
+1. **Functional Contribution**: MedGemma provides real-time analysis and insights, allowing for quicker decision-making during liver assessment. Its algorithms improve measurement precision, directly impacting patient outcomes.
+
+2. **Methodological Value**: Integrating MedGemma into our pipeline enables the use of state-of-the-art techniques for volumetric measurements. This ensures consistency and reliability in the methodologies applied across different patient datasets.
+
+3. **Advantages Over Developing a Custom LLM**: Building a custom Large Language Model (LLM) from scratch often requires substantial resources in terms of time, data, and expertise. MedGemma offers a ready-to-use solution that leverages existing research and algorithms, thus reducing development overhead and expediting implementation.
+
+4. **Impact on the Overall Pipeline**: The integration of MedGemma has streamlined our workflow, allowing for seamless data input and output. This not only enhances productivity but also leads to more robust and reproducible results, improving the overall quality of liver volumetry assessments in clinical practice.
+
+In summary, the MedGemma integration represents a significant advancement in liver volumetry, combining functional, methodological, and practical advantages that elevate our analytical capabilities and patient care standards.
 
 ---
 
@@ -287,3 +306,13 @@ MIT License. See [LICENSE](LICENSE).
 ## Disclaimer
 
 This is not a substitute for professional medical advice. Outputs should be validated with clinical experts before deployment. Do not use real patient data in this repository.
+
+## Citation
+```bibtex
+@misc{snaimasters2026livervolumetry,
+  title={Liver Volumetry},
+  author={Metou SANGHE, Aby DIALLO, Mamadou BOUSSO, Oumar KANE, Cheikh Yakhoub MAAS},
+  howpublished={https://github.com/Oumar199/LiverVolumetry},
+  year={2026}
+}
+```
