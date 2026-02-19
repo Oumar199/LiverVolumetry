@@ -12,9 +12,9 @@ setup(
         "torch==2.6",
         "torchvision",
         "tensorflow>=2.16.1",
-        "keras>=3.4.0",  # Remplace tf-keras
+        "keras>=3.4.0", 
         "numpy<2.0.0",
-        "transformers>=4.40.0",  # Version plus standard
+        "transformers>=4.40.0",
         "accelerate>=0.30.0",
         "safetensors>=0.4.0",
         "pillow>=10.0.0",
@@ -22,6 +22,7 @@ setup(
         "bitsandbytes>=0.42.0",
         "sentencepiece",
         "protobuf<=5.28.3",
-        "huggingface_hub",  # Évite les conflits de génération de code avec TF
+        "huggingface_hub", 
+        "reportlab==3.6.12"
     ],
 )
