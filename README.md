@@ -333,6 +333,10 @@ MIT License. See [LICENSE](LICENSE).
 
 This is not a substitute for professional medical advice. Outputs should be validated with clinical experts before deployment. Do not use real patient data in this repository.
 
+## Sub-Projects
+
+- Liver Fibrosis Detection and Analysis with Medgemma ([click](https://github.com/Oumar199/LiverFibrosisDetection) to see)
+
 ## Citation
 ```bibtex
 @misc{snaimasters2026livervolumetry,
