@@ -325,7 +325,7 @@ MIT License. See [LICENSE](LICENSE).
 ## References
 
 - *Apprentissage en profondeur pour la volumétrie du foie dans la planification préopératoire* 
-- [3D-IRCAdb-01 dataset](https://www.ircad.fr/research/3dircadb/)
+- [3D-IRCAdb-01 dataset](https://www.ircad.fr/research/data-sets/liver-segmentation-3d-ircadb-01/)
 
 ---
 
