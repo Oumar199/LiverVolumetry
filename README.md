@@ -1,4 +1,4 @@
-# LiverVolumetry
+# LiverVolumetry (from the project MedGemma-LiverVol Africa)
 
 **Deep Learning for Liver and Tumor Volumetry in Preoperative Planning**  
 _Estimation précise des volumes tumoraux et hépatiques pour le CHC, avec segmentation automatique et analyse avancée._
