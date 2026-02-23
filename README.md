@@ -1,9 +1,10 @@
-# LiverVolumetry
+# LiverVolumetry (from the project MedGemma-LiverVol Africa)
 
 **Deep Learning for Liver and Tumor Volumetry in Preoperative Planning**  
 _Estimation précise des volumes tumoraux et hépatiques pour le CHC, avec segmentation automatique et analyse avancée._
 
-<img width="1432" height="953" alt="image" src="https://github.com/user-attachments/assets/7a5feef7-e7da-43c6-a4fc-12b267dba18b" />
+<img width="978" height="651" alt="image" src="https://github.com/user-attachments/assets/82445816-392f-49a9-9924-f7d9c394ee9e" />
+
 
 
 
@@ -332,6 +333,10 @@ MIT License. See [LICENSE](LICENSE).
 ## Disclaimer
 
 This is not a substitute for professional medical advice. Outputs should be validated with clinical experts before deployment. Do not use real patient data in this repository.
+
+## Sub-Projects
+
+- Liver Fibrosis Detection and Analysis with Medgemma ([click](https://github.com/Oumar199/LiverFibrosisDetection) to see)
 
 ## Citation
 ```bibtex
