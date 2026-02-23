@@ -1,0 +1,3 @@
+[submodule "LiverFibrosisDetection"]
+	path = LiverFibrosisDetection
+	url = https://github.com/Oumar199/LiverFibrosisDetection.git
