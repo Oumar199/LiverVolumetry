@@ -26,7 +26,7 @@ Accurate tumor and liver volume estimation is critical for optimizing surgical p
 This project leverages deep learning to automate liver and tumor segmentation from DICOM images, followed by precise volumetric calculations. The workflow minimizes human error, enhances quantitative reliability, and provides an innovative decision-support tool for clinicians.
 
 **Recent update:**  
-We added automatic outcome analysis of the volumetry model using a quantized 4-bit Medgemma 1.5-4b model. This large language model offers efficient, on-device clinical report generation and result summarization, supporting deployment in resource-limited settings.
+We added automatic outcome analysis of the volumetry model using a quantized 4-bit Medgemma 1.5-4b-it model. This large language model offers efficient, on-device clinical report generation and result summarization, supporting deployment in resource-limited settings.
 
 ---
 
@@ -45,9 +45,9 @@ We added automatic outcome analysis of the volumetry model using a quantized 4-b
 - **Baseline Models:** U-Net, Attention U-Net, U-Net+ResNet50+CBAM, ResuNet, FCN
 - **Evaluation Metrics:** Dice coefficient, accuracy, binary cross-entropy loss, volumetric RMSE
 
-### Medgemma 1.5-4b Integration
+### Medgemma 1.5-4b-it Integration
 
-- **Contribution:** The repository now supports outcome analysis via the Medgemma 1.5-4b model quantized to 4-bit, enabling fast and memory-efficient clinical summarization.  
+- **Contribution:** The repository now supports outcome analysis via the Medgemma 1.5-4b-it model quantized to 4-bit, enabling fast and memory-efficient clinical summarization.  
 - **Workflow:** Results from the volumetry pipeline are passed to Medgemma for automated interpretation and report generation, facilitating clinical adoption.
 - **MedGemma Liver Tumor Volume Interpretation Template Example** For multimodal input with segmentation volumes:
 
@@ -116,7 +116,7 @@ You can use the **Liver Volumetry** project in two ways, depending on your needs
 
 ### 1. Direct Analysis (Recommended)
 
-To analyze a liver image and retrieve all results instantly, we recommend using a **RunPod Serverless API**. This method utilizes a quantized **Medgemma-1.5-4b** model for high-performance inference without local setup. We provide in this repository all necessary elements to deploy a Runpod Serverless API from Github.
+To analyze a liver image and retrieve all results instantly, we recommend using a **RunPod Serverless API**. This method utilizes a quantized **Medgemma-1.5-4b-it** model for high-performance inference without local setup. We provide in this repository all necessary elements to deploy a Runpod Serverless API from Github.
 
 👉 **Go to**: [Deploy workers from GitHub](https://docs.runpod.io/serverless/workers/github-integration) and follow the deployment process.
 
@@ -235,7 +235,7 @@ ltp.plot_results(
 
 ### 🩺 AI-Powered Clinical Analysis
 
-The final clinical interpretation is powered by the quantized **Medgemma-1.5-4b**  model. While the segmentation models are included locally, the analysis weights must be downloaded separately or accessed via API.
+The final clinical interpretation is powered by the quantized **Medgemma-1.5-4b-it**  model. While the segmentation models are included locally, the analysis weights must be downloaded separately or accessed via API.
 
 #### 1. Local Analysis (Advanced Users)
 To run the analysis locally, download the quantized weights from our **Hugging Face** profile.
@@ -302,7 +302,7 @@ generate_medical_report(
 ## Data & Model Information
 
 - **Dataset:** 3D-IRCAdb-01 public CT scans (20 patients)
-- **Models:** Pre-trained neural networks (`Metou/ModelSegmentation`) and quantized **Medgemma-1.5-4b** (`Metou/MedGemma-1.5-4B`) available in our huggingface repositories.
+- **Models:** Pre-trained neural networks (`Metou/ModelSegmentation`) and quantized **Medgemma-1.5-4b-it** (`Metou/MedGemma-1.5-4B`) available in our huggingface repositories.
 - **No real patient data** is included in the repository; all examples use synthetic or public data.
 
 ---
