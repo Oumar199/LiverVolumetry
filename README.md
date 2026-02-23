@@ -3,7 +3,8 @@
 **Deep Learning for Liver and Tumor Volumetry in Preoperative Planning**  
 _Estimation précise des volumes tumoraux et hépatiques pour le CHC, avec segmentation automatique et analyse avancée._
 
-<img width="1432" height="953" alt="image" src="https://github.com/user-attachments/assets/7a5feef7-e7da-43c6-a4fc-12b267dba18b" />
+<img width="978" height="651" alt="image" src="https://github.com/user-attachments/assets/82445816-392f-49a9-9924-f7d9c394ee9e" />
+
 
 
 
